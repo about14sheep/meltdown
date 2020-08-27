@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', e => {
         this.anims.create({
             key: 'walking',
             frames: this.anims.generateFrameNumbers('scientist', {
-                prefix: 'scientist_', start: 2, end: 3
+                prefix: 'scientist_', start: 3, end: 2
             }),
             frameRate: 4,
             repeat: -1
@@ -87,32 +87,33 @@ document.addEventListener('DOMContentLoaded', e => {
     function update() {
         this.player.setVelocityY(0)
         this.player.setVelocityX(0)
+        let isPlayerUsing = false
+        if (this.player.anims.currentAnim && this.player.anims.currentAnim.key == 'using') {
+            isPlayerUsing = true
+        }
         if (this.cursors.right.isDown) {
-            this.player.setVelocityX(200)
             this.player.play('walking', true)
+            this.player.setVelocityX(200)
         }
         if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-200)
             this.player.play('walking', true)
+            this.player.setVelocityX(-200)
         }
         if (this.cursors.up.isDown) {
-            this.player.setVelocityY(-200)
             this.player.play('walking', true)
+            this.player.setVelocityY(-200)
         }
         if (this.cursors.down.isDown) {
-            this.player.setVelocityY(200)
             this.player.play('walking', true)
+            this.player.setVelocityY(200)
         }
 
-        if (this.player.body.velocity.x > 0 || this.player.body.velocity.y > 0) {
+        if (this.player.body.velocity.x > 0) {
             this.player.setFlipX(false);
-        } else if (this.player.body.velocity.x < 0 || this.player.body.velocity.y < 0) {
+        } else if (this.player.body.velocity.x < 0) {
             this.player.setFlipX(true)
-        } else {
-
-            if (this.player.anims.currentAnim && this.player.anims.currentAnim.key != 'using') {
-                this.player.play('idle', true)
-            }
+        } else if (this.player.body.velocity.x === 0 && this.player.body.velocity.y === 0) {
+            isPlayerUsing ? console.log('**running minigame**') : this.player.play('idle', true)
         }
     }
 })
