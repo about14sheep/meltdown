@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', e => {
         this.physics.add.overlap(this.player, usableBottoms)
         this.physics.add.collider(this.player, pipes)
         this.cursors = this.input.keyboard.createCursorKeys()
+        this.keys = this.input.keyboard.addKeys('W,S,A,D')
         camera.startFollow(this.player)
     }
 
@@ -91,16 +92,16 @@ document.addEventListener('DOMContentLoaded', e => {
         if (this.player.anims.currentAnim && this.player.anims.currentAnim.key == 'using') {
             isPlayerUsing = true
         }
-        if (this.cursors.right.isDown) {
+        if (this.cursors.right.isDown || this.keys.D.isDown) {
             this.player.setVelocityX(200)
         }
-        if (this.cursors.left.isDown) {
+        if (this.cursors.left.isDown || this.keys.A.isDown) {
             this.player.setVelocityX(-200)
         }
-        if (this.cursors.up.isDown) {
+        if (this.cursors.up.isDown || this.keys.W.isDown) {
             this.player.setVelocityY(-200)
         }
-        if (this.cursors.down.isDown) {
+        if (this.cursors.down.isDown || this.keys.S.isDown) {
             this.player.setVelocityY(200)
         }
 
