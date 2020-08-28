@@ -92,19 +92,15 @@ document.addEventListener('DOMContentLoaded', e => {
             isPlayerUsing = true
         }
         if (this.cursors.right.isDown) {
-            this.player.play('walking', true)
             this.player.setVelocityX(200)
         }
         if (this.cursors.left.isDown) {
-            this.player.play('walking', true)
             this.player.setVelocityX(-200)
         }
         if (this.cursors.up.isDown) {
-            this.player.play('walking', true)
             this.player.setVelocityY(-200)
         }
         if (this.cursors.down.isDown) {
-            this.player.play('walking', true)
             this.player.setVelocityY(200)
         }
 
@@ -114,6 +110,9 @@ document.addEventListener('DOMContentLoaded', e => {
             this.player.setFlipX(true)
         } else if (this.player.body.velocity.x === 0 && this.player.body.velocity.y === 0) {
             isPlayerUsing ? console.log('**running minigame**') : this.player.play('idle', true)
+        }
+        if (this.player.body.velocity.x != 0 || this.player.body.velocity.y != 0) {
+            this.player.play('walking', true)
         }
     }
 })
