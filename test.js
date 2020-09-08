@@ -12,24 +12,23 @@ document.addEventListener('DOMContentLoaded', e => {
             update: update
         }
     }
-
     const game = new Phaser.Game(config)
     const ws = new WebSocket(`ws://localhost:3000`)
     ws.onopen = e => {
         console.log(`Socket is now open`)
-        const msg = 'Hey hey you there'
-        ws.send(msg)
+    }
+    ws.onmessage = e => {
+        const msg = JSON.parse(e.data)
+        console.log(msg)
     }
     WebSocket.current = {
         ws,
     }
-
     function cleanup() {
         if (WebSocket.current !== null) {
             WebSocket.current.ws.close()
         }
     }
-
 
 
     function preload() {
@@ -106,6 +105,7 @@ document.addEventListener('DOMContentLoaded', e => {
     function update() {
         this.player.setVelocityY(0)
         this.player.setVelocityX(0)
+        sendPosition(this.player)
         let isPlayerUsing = false
         if (this.player.anims.currentAnim && this.player.anims.currentAnim.key == 'using') {
             isPlayerUsing = true
@@ -134,8 +134,21 @@ document.addEventListener('DOMContentLoaded', e => {
             this.player.play('walking', true)
         }
     }
+
+    const sendPosition = (position) => {
+        const msg = {
+            type: 'PLAYER_POSTION',
+            data: {
+                x: position.x,
+                y: position.y
+            }
+        }
+        return isOpen(ws) ? ws.send(JSON.stringify(msg)) : null
+    }
+    const isOpen = ws => ws.readyState === ws.OPEN
 })
 
 function useTile(player) {
     player.play('using', true)
 }
+

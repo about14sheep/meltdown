@@ -1,12 +1,37 @@
 import asyncio
 import websockets
+import json
+
+players = set()
+
+
+def player_connect():
+    return json.dumps({"type": "players", "count": len(players)})
+
+
+async def notify_players(msg):
+    if players:
+        await asyncio.wait([player.send(msg) for player in players])
+
+
+async def register(websocket):
+    players.add(websocket)
+    await notify_players(player_connect())
+
+
+async def unregister(websocket):
+    players.remove(websocket)
+    await notify_players(player_connect())
 
 
 async def connect(websocket, path):
-    res = await websocket.recv()
-    print(f'{res}')
-    msg = f'from server: {res}'
-    await websocket.send(msg)
+    await register(websocket)
+    try:
+        async for msg in websocket:
+            data = json.loads(msg)
+            # await notify_players(msg)
+    finally:
+        await unregister(websocket)
 
 
 start_server = websockets.serve(connect, "localhost", 3000)
