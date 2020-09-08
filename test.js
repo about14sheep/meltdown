@@ -14,6 +14,24 @@ document.addEventListener('DOMContentLoaded', e => {
     }
 
     const game = new Phaser.Game(config)
+    const ws = new WebSocket(`ws://localhost:3000`)
+    ws.onopen = e => {
+        console.log(`Socket is now open`)
+        const msg = 'Hey hey you there'
+        ws.send(msg)
+    }
+    WebSocket.current = {
+        ws,
+    }
+
+    function cleanup() {
+        if (WebSocket.current !== null) {
+            WebSocket.current.ws.close()
+        }
+    }
+
+
+
     function preload() {
         this.load.spritesheet('tiles', 'assets/factory_tileset.png', {
             frameWidth: 16,
