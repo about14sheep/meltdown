@@ -1,3 +1,6 @@
+const PLAYER_POSITION = 'PLAYER_POSITION'
+const PLAYER_CONNECTION = 'PLAYER_CONNECTION'
+
 document.addEventListener('DOMContentLoaded', e => {
     const config = {
         type: Phaser.AUTO,
@@ -14,21 +17,9 @@ document.addEventListener('DOMContentLoaded', e => {
     }
     const game = new Phaser.Game(config)
     const ws = new WebSocket(`ws://localhost:3000`)
-    ws.onopen = e => {
-        console.log(`Socket is now open`)
-    }
-    ws.onmessage = e => {
-        const msg = JSON.parse(e.data)
-        console.log(msg)
-    }
-    WebSocket.current = {
-        ws,
-    }
-    function cleanup() {
-        if (WebSocket.current !== null) {
-            WebSocket.current.ws.close()
-        }
-    }
+    const playerID = Math.floor(Math.random() * 11)
+    const players = new Map()
+
 
 
     function preload() {
@@ -41,6 +32,7 @@ document.addEventListener('DOMContentLoaded', e => {
             frameHeight: 48
         })
         this.load.tilemapTiledJSON('map', 'assets/meltdown_start_room.json')
+        this.load.image('otherDude', 'assets/favicon.png')
     }
 
     function create() {
@@ -91,6 +83,7 @@ document.addEventListener('DOMContentLoaded', e => {
         accents.setScale(3)
         this.player = this.physics.add.sprite(config.width / 2, config.height / 2, 'scientist')
         usableBottoms.setTileIndexCallback(['1325', '1277'], useTile, this.player)
+        this.otherPlayers = this.physics.add.group()
         this.physics.add.collider(this.player, walls)
         this.physics.add.collider(this.player, usableTops)
         this.physics.add.collider(this.player, computers)
@@ -100,12 +93,48 @@ document.addEventListener('DOMContentLoaded', e => {
         this.cursors = this.input.keyboard.createCursorKeys()
         this.keys = this.input.keyboard.addKeys('W,S,A,D')
         camera.startFollow(this.player)
+
+        ws.onmessage = e => {
+            const msg = JSON.parse(e.data)
+            if (msg.type === PLAYER_POSITION) {
+                data = msg.data
+
+                if (!players.get(parseInt(data.player, 10))) {
+                    addOtherPlayers(this, data)
+                }
+                this.otherPlayers.getChildren().forEach(otherPlayer => {
+                    if (otherPlayer.playerID === data.player) {
+                        otherPlayer.x = data.position.x
+                        otherPlayer.y = data.position.y
+                    }
+                })
+
+            }
+            if (msg.type === 'players') {
+                console.log(msg)
+            }
+        }
+        WebSocket.current = {
+            ws,
+        }
+        function cleanup() {
+            if (WebSocket.current !== null) {
+                WebSocket.current.ws.close()
+            }
+        }
     }
 
     function update() {
         this.player.setVelocityY(0)
         this.player.setVelocityX(0)
-        sendPosition(this.player)
+        if (this.player.oldPosition && (this.player.x != this.player.oldPosition.x || this.player.y != this.player.oldPosition.y)) {
+            sendPosition(this.player)
+        }
+        this.player.oldPosition = {
+            x: this.player.x,
+            y: this.player.y
+        }
+
         let isPlayerUsing = false
         if (this.player.anims.currentAnim && this.player.anims.currentAnim.key == 'using') {
             isPlayerUsing = true
@@ -137,15 +166,27 @@ document.addEventListener('DOMContentLoaded', e => {
 
     const sendPosition = (position) => {
         const msg = {
-            type: 'PLAYER_POSTION',
+            type: PLAYER_POSITION,
             data: {
-                x: position.x,
-                y: position.y
+                player: playerID,
+                position: {
+                    x: position.x,
+                    y: position.y
+                }
             }
         }
         return isOpen(ws) ? ws.send(JSON.stringify(msg)) : null
     }
     const isOpen = ws => ws.readyState === ws.OPEN
+
+    function addOtherPlayers(self, data) {
+        players.set(parseInt(data.player, 10), data.position)
+        if (parseInt(data.player, 10) != playerID) {
+            const otherPlayer = self.add.sprite(data.position.x, data.position.y, 'otherDude')
+            otherPlayer.playerID = parseInt(data.player, 10)
+            self.otherPlayers.add(otherPlayer)
+        }
+    }
 })
 
 function useTile(player) {
