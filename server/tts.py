@@ -2,25 +2,25 @@ import asyncio
 import websockets
 import json
 
-players = set()
+sockets = set()
 
 
 def player_connect():
-    return json.dumps({"type": "players", "count": len(players)})
+    return json.dumps({"type": "players", "count": len(sockets)})
 
 
 async def notify_players(msg):
-    if players:
-        await asyncio.wait([player.send(msg) for player in players])
+    if sockets:
+        await asyncio.wait([socket.send(msg) for socket in sockets])
 
 
 async def register(websocket):
-    players.add(websocket)
+    sockets.add(websocket)
     await notify_players(player_connect())
 
 
 async def unregister(websocket):
-    players.remove(websocket)
+    sockets.remove(websocket)
     await notify_players(player_connect())
 
 
@@ -29,7 +29,7 @@ async def connect(websocket, path):
     try:
         async for msg in websocket:
             data = json.loads(msg)
-            # await notify_players(msg)
+            await notify_players(msg)
     finally:
         await unregister(websocket)
 
