@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', e => {
 
             }
             if (msg.type === 'players') {
-                console.log(msg)
+                // console.log(msg)
             }
         }
         WebSocket.current = {
