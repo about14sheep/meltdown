@@ -20,8 +20,6 @@ document.addEventListener('DOMContentLoaded', e => {
     const playerID = Math.floor(Math.random() * 11)
     const players = new Map()
 
-
-
     function preload() {
         this.load.spritesheet('tiles', 'assets/factory_tileset.png', {
             frameWidth: 16,
@@ -44,18 +42,19 @@ document.addEventListener('DOMContentLoaded', e => {
                 prefix: 'scientist_', start: 3, end: 2
             }),
             frameRate: 4,
+            repeat: 0
         })
 
         this.anims.create({
             key: 'idle',
             frames: [{ key: 'scientist', frame: 0 }],
-            frameRate: 10,
+            frameRate: 1,
         })
 
         this.anims.create({
             key: 'using',
             frames: [{ key: 'scientist', frame: 1 }],
-            frameRate: 10,
+            frameRate: 1,
         })
 
         const tileset = map.addTilesetImage("factory_tileset", "tiles")
@@ -96,7 +95,7 @@ document.addEventListener('DOMContentLoaded', e => {
         ws.onmessage = e => {
             const msg = JSON.parse(e.data)
             if (msg.type === PLAYER_POSITION) {
-                data = msg.data
+                const data = msg.data
                 if (!players.get(parseInt(data.player, 10))) {
                     addOtherPlayers(this, data)
                 }
@@ -104,12 +103,13 @@ document.addEventListener('DOMContentLoaded', e => {
                     if (otherPlayer.playerID === data.player) {
                         otherPlayer.x = data.position.x
                         otherPlayer.y = data.position.y
+                        otherPlayer.play('walking', true)
                     }
                 })
             }
 
             if (msg.type === PLAYER_USING) {
-                data = msg.data
+                const data = msg.data
                 this.otherPlayers.getChildren().forEach(player => {
                     if (player.playerID === data.player) {
                         player.play('using', true)
@@ -117,6 +117,14 @@ document.addEventListener('DOMContentLoaded', e => {
                 })
             }
 
+            if (msg.type === 'PLAYER_IDLE') {
+                const data = msg.data
+                this.otherPlayers.getChildren().forEach(player => {
+                    if (player.playerID === data.player) {
+                        player.play('idle', true)
+                    }
+                })
+            }
             if (msg.type === 'players') {
                 console.log(msg)
             }
@@ -139,7 +147,6 @@ document.addEventListener('DOMContentLoaded', e => {
         const others = this.otherPlayers.getChildren()
         others.forEach(player => {
             if (player.oldPosition && (player.x != player.oldPosition.x || player.y != player.oldPosition.y)) {
-                player.play('walking', true)
                 if (player.x < player.oldPosition.x) {
                     player.setFlipX(true)
                 } else if (player.x > player.oldPosition.x) {
@@ -154,7 +161,7 @@ document.addEventListener('DOMContentLoaded', e => {
         })
 
         if (this.player.oldPosition && (this.player.x != this.player.oldPosition.x || this.player.y != this.player.oldPosition.y)) {
-            sendPosition(this.player)
+
         }
 
         this.player.oldPosition = {
@@ -191,11 +198,27 @@ document.addEventListener('DOMContentLoaded', e => {
         } else if (this.player.body.velocity.x < 0) {
             this.player.setFlipX(true)
         } else if (this.player.body.velocity.x === 0 && this.player.body.velocity.y === 0) {
-            isPlayerUsing ? console.log('**running minigame**') : this.player.play('idle', true)
+            if (isPlayerUsing) {
+                console.log('**running minigame**')
+            } else {
+                sendIdle()
+                this.player.play('idle', true)
+            }
         }
         if (this.player.body.velocity.x != 0 || this.player.body.velocity.y != 0) {
+            sendPosition(this.player)
             this.player.play('walking', true)
         }
+    }
+
+    const sendIdle = _ => {
+        const msg = {
+            type: 'PLAYER_IDLE',
+            data: {
+                player: playerID,
+            }
+        }
+        return isOpen(ws) ? ws.send(JSON.stringify(msg)) : null
     }
 
     const sendPosition = (position) => {
