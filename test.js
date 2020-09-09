@@ -1,5 +1,5 @@
 const PLAYER_POSITION = 'PLAYER_POSITION'
-const PLAYER_CONNECTION = 'PLAYER_CONNECTION'
+const PLAYER_USING = 'PLAYER_USING'
 
 document.addEventListener('DOMContentLoaded', e => {
     const config = {
@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', e => {
                 prefix: 'scientist_', start: 3, end: 2
             }),
             frameRate: 4,
-            repeat: -1
         })
 
         this.anims.create({
@@ -98,7 +97,6 @@ document.addEventListener('DOMContentLoaded', e => {
             const msg = JSON.parse(e.data)
             if (msg.type === PLAYER_POSITION) {
                 data = msg.data
-
                 if (!players.get(parseInt(data.player, 10))) {
                     addOtherPlayers(this, data)
                 }
@@ -108,15 +106,26 @@ document.addEventListener('DOMContentLoaded', e => {
                         otherPlayer.y = data.position.y
                     }
                 })
-
             }
+
+            if (msg.type === PLAYER_USING) {
+                data = msg.data
+                this.otherPlayers.getChildren().forEach(player => {
+                    if (player.playerID === data.player) {
+                        player.play('using', true)
+                    }
+                })
+            }
+
             if (msg.type === 'players') {
-                // console.log(msg)
+                console.log(msg)
             }
         }
+
         WebSocket.current = {
             ws,
         }
+
         function cleanup() {
             if (WebSocket.current !== null) {
                 WebSocket.current.ws.close()
@@ -127,9 +136,27 @@ document.addEventListener('DOMContentLoaded', e => {
     function update() {
         this.player.setVelocityY(0)
         this.player.setVelocityX(0)
+        const others = this.otherPlayers.getChildren()
+        others.forEach(player => {
+            if (player.oldPosition && (player.x != player.oldPosition.x || player.y != player.oldPosition.y)) {
+                player.play('walking', true)
+                if (player.x < player.oldPosition.x) {
+                    player.setFlipX(true)
+                } else if (player.x > player.oldPosition.x) {
+                    player.setFlipX(false)
+                }
+            }
+
+            player.oldPosition = {
+                x: player.x,
+                y: player.y
+            }
+        })
+
         if (this.player.oldPosition && (this.player.x != this.player.oldPosition.x || this.player.y != this.player.oldPosition.y)) {
             sendPosition(this.player)
         }
+
         this.player.oldPosition = {
             x: this.player.x,
             y: this.player.y
@@ -137,6 +164,13 @@ document.addEventListener('DOMContentLoaded', e => {
 
         let isPlayerUsing = false
         if (this.player.anims.currentAnim && this.player.anims.currentAnim.key == 'using') {
+            const msg = {
+                type: 'PLAYER_USING',
+                data: {
+                    player: playerID
+                }
+            }
+            ws.send(JSON.stringify(msg))
             isPlayerUsing = true
         }
         if (this.cursors.right.isDown || this.keys.D.isDown) {
@@ -182,7 +216,7 @@ document.addEventListener('DOMContentLoaded', e => {
     function addOtherPlayers(self, data) {
         players.set(parseInt(data.player, 10), data.position)
         if (parseInt(data.player, 10) != playerID) {
-            const otherPlayer = self.add.sprite(data.position.x, data.position.y, 'otherDude')
+            const otherPlayer = self.add.sprite(data.position.x, data.position.y, 'scientist')
             otherPlayer.playerID = parseInt(data.player, 10)
             self.otherPlayers.add(otherPlayer)
         }
