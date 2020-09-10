@@ -3,10 +3,15 @@ import websockets
 import json
 
 sockets = set()
+players = {}
 
 
 def player_connect():
     return json.dumps({"type": "players", "count": len(sockets)})
+
+
+def player_disconnect(id):
+    return json.dumps({"type": "PLAYER_DISCONNECT", "data": {"player": id}})  # noqa
 
 
 async def notify_players(msg):
@@ -21,6 +26,10 @@ async def register(websocket):
 
 async def unregister(websocket):
     sockets.remove(websocket)
+    for id, socket in players.items():
+        if socket == websocket:
+            await notify_players(player_disconnect(id))
+            del players[id]
     await notify_players(player_connect())
 
 
@@ -29,6 +38,9 @@ async def connect(websocket, path):
     try:
         async for msg in websocket:
             data = json.loads(msg)
+            if data['type'] == 'PLAYER_CONNECTION':
+                data = data['data']
+                players[data['player']] = websocket
             await notify_players(msg)
     finally:
         await unregister(websocket)

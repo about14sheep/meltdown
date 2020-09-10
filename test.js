@@ -1,5 +1,8 @@
+const PLAYER_CONNECTION = 'PLAYER_CONNECTION'
+const PLAYER_DISCONNECT = 'PLAYER_DISCONNECT'
 const PLAYER_POSITION = 'PLAYER_POSITION'
 const PLAYER_USING = 'PLAYER_USING'
+const PLAYER_IDLE = 'PLAYER_IDLE'
 
 document.addEventListener('DOMContentLoaded', e => {
     const config = {
@@ -92,8 +95,41 @@ document.addEventListener('DOMContentLoaded', e => {
         this.keys = this.input.keyboard.addKeys('W,S,A,D')
         camera.startFollow(this.player)
 
+        ws.onopen = e => {
+            const msg = {
+                type: PLAYER_CONNECTION,
+                data: {
+                    player: playerID,
+                    position: {
+                        x: config.width / 2,
+                        y: config.height / 2
+                    }
+                }
+            }
+            ws.send(JSON.stringify(msg))
+        }
+
         ws.onmessage = e => {
             const msg = JSON.parse(e.data)
+
+            if (msg.type === PLAYER_CONNECTION) {
+                const data = msg.data
+                if (!players.get(parseInt(data.player, 10))) {
+                    addOtherPlayers(this, data)
+                }
+            }
+
+            if (msg.type === PLAYER_DISCONNECT) {
+                const data = msg.data
+                const playerRemove = players.get(parseInt(data.player, 10))
+                players.delete(playerRemove)
+                this.otherPlayers.getChildren().forEach(el => {
+                    if (el.playerID === data.player) {
+                        el.disableBody(true, true)
+                    }
+                })
+            }
+
             if (msg.type === PLAYER_POSITION) {
                 const data = msg.data
                 if (!players.get(parseInt(data.player, 10))) {
@@ -104,6 +140,7 @@ document.addEventListener('DOMContentLoaded', e => {
                         otherPlayer.x = data.position.x
                         otherPlayer.y = data.position.y
                         otherPlayer.play('walking', true)
+                        otherPlayer.setFlipX(data.direction)
                     }
                 })
             }
@@ -117,7 +154,7 @@ document.addEventListener('DOMContentLoaded', e => {
                 })
             }
 
-            if (msg.type === 'PLAYER_IDLE') {
+            if (msg.type === PLAYER_IDLE) {
                 const data = msg.data
                 this.otherPlayers.getChildren().forEach(player => {
                     if (player.playerID === data.player) {
@@ -130,55 +167,27 @@ document.addEventListener('DOMContentLoaded', e => {
             }
         }
 
-        WebSocket.current = {
-            ws,
-        }
-
-        function cleanup() {
-            if (WebSocket.current !== null) {
-                WebSocket.current.ws.close()
-            }
-        }
-    }
-
-    function update() {
-        this.player.setVelocityY(0)
-        this.player.setVelocityX(0)
-        const others = this.otherPlayers.getChildren()
-        others.forEach(player => {
-            if (player.oldPosition && (player.x != player.oldPosition.x || player.y != player.oldPosition.y)) {
-                if (player.x < player.oldPosition.x) {
-                    player.setFlipX(true)
-                } else if (player.x > player.oldPosition.x) {
-                    player.setFlipX(false)
-                }
-            }
-
-            player.oldPosition = {
-                x: player.x,
-                y: player.y
-            }
-        })
-
-        if (this.player.oldPosition && (this.player.x != this.player.oldPosition.x || this.player.y != this.player.oldPosition.y)) {
-
-        }
-
-        this.player.oldPosition = {
-            x: this.player.x,
-            y: this.player.y
-        }
-
-        let isPlayerUsing = false
-        if (this.player.anims.currentAnim && this.player.anims.currentAnim.key == 'using') {
+        ws.onclose = e => {
             const msg = {
-                type: 'PLAYER_USING',
+                type: PLAYER_DISCONNECT,
                 data: {
                     player: playerID
                 }
             }
             ws.send(JSON.stringify(msg))
+        }
+
+
+    }
+
+    function update() {
+        this.player.setVelocityY(0)
+        this.player.setVelocityX(0)
+
+        let isPlayerUsing = false
+        if (this.player.anims.currentAnim && this.player.anims.currentAnim.key == 'using') {
             isPlayerUsing = true
+            sendUsing()
         }
         if (this.cursors.right.isDown || this.keys.D.isDown) {
             this.player.setVelocityX(200)
@@ -209,11 +218,21 @@ document.addEventListener('DOMContentLoaded', e => {
             sendPosition(this.player)
             this.player.play('walking', true)
         }
+
+        WebSocket.current = {
+            ws,
+        }
+
+        return function cleanup() {
+            if (WebSocket.current !== null) {
+                WebSocket.current.ws.close()
+            }
+        }
     }
 
     const sendIdle = _ => {
         const msg = {
-            type: 'PLAYER_IDLE',
+            type: PLAYER_IDLE,
             data: {
                 player: playerID,
             }
@@ -229,17 +248,28 @@ document.addEventListener('DOMContentLoaded', e => {
                 position: {
                     x: position.x,
                     y: position.y
-                }
+                },
+                direction: position.flipX
             }
         }
         return isOpen(ws) ? ws.send(JSON.stringify(msg)) : null
     }
     const isOpen = ws => ws.readyState === ws.OPEN
 
+    const sendUsing = _ => {
+        const msg = {
+            type: PLAYER_USING,
+            data: {
+                player: playerID
+            }
+        }
+        ws.send(JSON.stringify(msg))
+    }
+
     function addOtherPlayers(self, data) {
         players.set(parseInt(data.player, 10), data.position)
         if (parseInt(data.player, 10) != playerID) {
-            const otherPlayer = self.add.sprite(data.position.x, data.position.y, 'scientist')
+            const otherPlayer = self.physics.add.sprite(data.position.x, data.position.y, 'scientist')
             otherPlayer.playerID = parseInt(data.player, 10)
             self.otherPlayers.add(otherPlayer)
         }
