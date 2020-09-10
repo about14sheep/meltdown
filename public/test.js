@@ -117,17 +117,18 @@ document.addEventListener('DOMContentLoaded', e => {
                 if (!players.get(parseInt(data.player, 10))) {
                     addOtherPlayers(this, data)
                 }
+                console.log(`Player ${data.player} has entered the lobby`)
             }
 
             if (msg.type === PLAYER_DISCONNECT) {
                 const data = msg.data
-                const playerRemove = players.get(parseInt(data.player, 10))
-                players.delete(playerRemove)
+                players.delete(parseInt(data.player, 10))
                 this.otherPlayers.getChildren().forEach(el => {
-                    if (el.playerID === data.player) {
+                    if (el.playerID === parseInt(data.player, 10)) {
                         el.disableBody(true, true)
                     }
                 })
+                console.log(`Player ${data.player} has left the lobby`)
             }
 
             if (msg.type === PLAYER_POSITION) {
@@ -136,7 +137,7 @@ document.addEventListener('DOMContentLoaded', e => {
                     addOtherPlayers(this, data)
                 }
                 this.otherPlayers.getChildren().forEach(otherPlayer => {
-                    if (otherPlayer.playerID === data.player) {
+                    if (otherPlayer.playerID === parseInt(data.player, 10)) {
                         otherPlayer.x = data.position.x
                         otherPlayer.y = data.position.y
                         otherPlayer.play('walking', true)
@@ -148,7 +149,7 @@ document.addEventListener('DOMContentLoaded', e => {
             if (msg.type === PLAYER_USING) {
                 const data = msg.data
                 this.otherPlayers.getChildren().forEach(player => {
-                    if (player.playerID === data.player) {
+                    if (player.playerID === parseInt(data.player, 10)) {
                         player.play('using', true)
                     }
                 })
@@ -157,7 +158,7 @@ document.addEventListener('DOMContentLoaded', e => {
             if (msg.type === PLAYER_IDLE) {
                 const data = msg.data
                 this.otherPlayers.getChildren().forEach(player => {
-                    if (player.playerID === data.player) {
+                    if (player.playerID === parseInt(data.player, 10)) {
                         player.play('idle', true)
                     }
                 })
@@ -175,8 +176,8 @@ document.addEventListener('DOMContentLoaded', e => {
                 }
             }
             ws.send(JSON.stringify(msg))
-        }
 
+        }
 
     }
 
@@ -230,6 +231,8 @@ document.addEventListener('DOMContentLoaded', e => {
         }
     }
 
+    const isOpen = ws => ws.readyState === ws.OPEN
+
     const sendIdle = _ => {
         const msg = {
             type: PLAYER_IDLE,
@@ -240,7 +243,7 @@ document.addEventListener('DOMContentLoaded', e => {
         return isOpen(ws) ? ws.send(JSON.stringify(msg)) : null
     }
 
-    const sendPosition = (position) => {
+    const sendPosition = position => {
         const msg = {
             type: PLAYER_POSITION,
             data: {
@@ -254,7 +257,6 @@ document.addEventListener('DOMContentLoaded', e => {
         }
         return isOpen(ws) ? ws.send(JSON.stringify(msg)) : null
     }
-    const isOpen = ws => ws.readyState === ws.OPEN
 
     const sendUsing = _ => {
         const msg = {
@@ -263,7 +265,7 @@ document.addEventListener('DOMContentLoaded', e => {
                 player: playerID
             }
         }
-        ws.send(JSON.stringify(msg))
+        return isOpen(ws) ? ws.send(JSON.stringify(msg)) : null
     }
 
     function addOtherPlayers(self, data) {
