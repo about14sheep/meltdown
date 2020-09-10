@@ -3,6 +3,7 @@ const PLAYER_DISCONNECT = 'PLAYER_DISCONNECT'
 const PLAYER_POSITION = 'PLAYER_POSITION'
 const PLAYER_USING = 'PLAYER_USING'
 const PLAYER_IDLE = 'PLAYER_IDLE'
+const LOBBY_PLAYERS = 'LOBBY_PLAYERS'
 
 document.addEventListener('DOMContentLoaded', e => {
     const config = {
@@ -112,6 +113,15 @@ document.addEventListener('DOMContentLoaded', e => {
         ws.onmessage = e => {
             const msg = JSON.parse(e.data)
 
+            if (msg.type === LOBBY_PLAYERS) {
+                const datas = msg.data
+                datas.forEach(data => {
+                    if (!players.get(parseInt(data.player, 10))) {
+                        addOtherPlayers(this, data)
+                    }
+                })
+            }
+
             if (msg.type === PLAYER_CONNECTION) {
                 const data = msg.data
                 if (!players.get(parseInt(data.player, 10))) {
@@ -133,9 +143,6 @@ document.addEventListener('DOMContentLoaded', e => {
 
             if (msg.type === PLAYER_POSITION) {
                 const data = msg.data
-                if (!players.get(parseInt(data.player, 10))) {
-                    addOtherPlayers(this, data)
-                }
                 this.otherPlayers.getChildren().forEach(otherPlayer => {
                     if (otherPlayer.playerID === parseInt(data.player, 10)) {
                         otherPlayer.x = data.position.x
