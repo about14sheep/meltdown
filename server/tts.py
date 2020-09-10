@@ -47,8 +47,7 @@ async def register(websocket):
 
 async def unregister(websocket):
     sockets.remove(websocket)
-    del players[websocket]
-    await notify_players(player_connect())
+    await notify_players(player_disconnect(players.pop(websocket).id))
 
 
 async def connect(websocket, path):
@@ -65,8 +64,8 @@ async def connect(websocket, path):
                 players[websocket].location = data['position']
             await notify_players(msg)
     finally:
-        await notify_players(player_disconnect(players[websocket].id))
         await unregister(websocket)
+
 
 start_server = websockets.serve(connect, "localhost", 3000)
 

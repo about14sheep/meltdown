@@ -127,7 +127,6 @@ document.addEventListener('DOMContentLoaded', e => {
                 if (!players.get(parseInt(data.player, 10))) {
                     addOtherPlayers(this, data)
                 }
-                console.log(`Player ${data.player} has entered the lobby`)
             }
 
             if (msg.type === PLAYER_DISCONNECT) {
@@ -138,7 +137,6 @@ document.addEventListener('DOMContentLoaded', e => {
                         el.disableBody(true, true)
                     }
                 })
-                console.log(`Player ${data.player} has left the lobby`)
             }
 
             if (msg.type === PLAYER_POSITION) {
