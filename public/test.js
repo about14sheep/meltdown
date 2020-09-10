@@ -163,8 +163,8 @@ document.addEventListener('DOMContentLoaded', e => {
                     }
                 })
             }
-            if (msg.type === 'players') {
-                console.log(msg)
+            if (msg.type === 'PLAYERS') {
+                //console.log(msg.data)
             }
         }
 

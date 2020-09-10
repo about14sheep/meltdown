@@ -7,18 +7,11 @@ players = {}
 
 
 def player_connect():
-    return json.dumps({"type": "players", "count": len(sockets)})
+    return json.dumps({"type": "PLAYERS", "data": len(sockets)})
 
 
 def player_disconnect(id):
     return json.dumps({"type": "PLAYER_DISCONNECT", "data": {"player": id}})  # noqa
-
-
-async def removePlayer(websocket):
-    for id, socket in players.items():
-        if socket == websocket:
-            del players[id]
-            await notify_players(player_disconnect(id))
 
 
 async def notify_players(msg):
@@ -33,6 +26,7 @@ async def register(websocket):
 
 async def unregister(websocket):
     sockets.remove(websocket)
+    del players[websocket]
     await notify_players(player_connect())
 
 
@@ -43,11 +37,11 @@ async def connect(websocket, path):
             data = json.loads(msg)
             if data['type'] == 'PLAYER_CONNECTION':
                 data = data['data']
-                players[data['player']] = websocket
+                players[websocket] = data['player']
             await notify_players(msg)
     finally:
+        await notify_players(player_disconnect(players[websocket]))
         await unregister(websocket)
-        await removePlayer(websocket)
 
 start_server = websockets.serve(connect, "localhost", 3000)
 
