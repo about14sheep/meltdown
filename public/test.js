@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', e => {
     const players = new Map()
 
     function preload() {
+        this.load.image('grass', 'assets/grass.png')
         this.load.spritesheet('tiles', 'assets/factory_tileset.png', {
             frameWidth: 16,
             frameHeight: 16
@@ -36,10 +37,13 @@ document.addEventListener('DOMContentLoaded', e => {
         })
         this.load.tilemapTiledJSON('map', 'assets/meltdown_start_room.json')
         this.load.image('otherDude', 'assets/favicon.png')
+
     }
 
     function create() {
         const camera = this.cameras.main
+        const grass = this.add.image(400, 300, 'grass')
+        grass.setScale(2.5)
         const map = this.make.tilemap({ key: "map" });
         this.anims.create({
             key: 'walking',
@@ -61,6 +65,10 @@ document.addEventListener('DOMContentLoaded', e => {
             frames: [{ key: 'scientist', frame: 1 }],
             frameRate: 1,
         })
+
+        const key = 'computer'
+        const computer = new ComputerBase(key)
+        this.scene.add(key, computer, true)
 
         const tileset = map.addTilesetImage("factory_tileset", "tiles")
         const floor = map.createStaticLayer('floor', tileset, 0, 0)
@@ -96,6 +104,7 @@ document.addEventListener('DOMContentLoaded', e => {
         this.cursors = this.input.keyboard.createCursorKeys()
         this.keys = this.input.keyboard.addKeys('W,S,A,D')
         camera.startFollow(this.player)
+
 
         ws.onopen = e => {
             const msg = {
@@ -193,10 +202,13 @@ document.addEventListener('DOMContentLoaded', e => {
         this.player.setVelocityX(0)
 
         let isPlayerUsing = false
+        this.scene.sendToBack('computer')
         if (this.player.anims.currentAnim && this.player.anims.currentAnim.key == 'using') {
             isPlayerUsing = true
             sendUsing()
         }
+
+
         if (this.cursors.right.isDown || this.keys.D.isDown) {
             this.player.setVelocityX(200)
         }
@@ -216,7 +228,7 @@ document.addEventListener('DOMContentLoaded', e => {
             this.player.setFlipX(true)
         } else if (this.player.body.velocity.x === 0 && this.player.body.velocity.y === 0) {
             if (isPlayerUsing) {
-                // console.log('**running minigame**')
+                this.scene.bringToTop('computer')
             } else {
                 sendIdle()
                 this.player.play('idle', true)
@@ -236,6 +248,7 @@ document.addEventListener('DOMContentLoaded', e => {
                 WebSocket.current.ws.close()
             }
         }
+
     }
 
     const isOpen = ws => ws.readyState === ws.OPEN
