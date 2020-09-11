@@ -8,9 +8,9 @@ sockets = set()
 players = {}
 
 
-def player_connect():
+def socket_count():
     return json.dumps({
-        "type": "PLAYERS",
+        "type": "SOCKET_COUNT",
         "data": len(sockets)
     })
 
@@ -42,7 +42,7 @@ async def configure_lobby(websocket):
 
 async def register(websocket):
     sockets.add(websocket)
-    await notify_players(player_connect())
+    await notify_players(socket_count())
 
 
 async def unregister(websocket):

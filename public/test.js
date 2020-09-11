@@ -4,6 +4,7 @@ const PLAYER_POSITION = 'PLAYER_POSITION'
 const PLAYER_USING = 'PLAYER_USING'
 const PLAYER_IDLE = 'PLAYER_IDLE'
 const LOBBY_PLAYERS = 'LOBBY_PLAYERS'
+const SOCKET_COUNT = 'SOCKET_COUNT'
 
 document.addEventListener('DOMContentLoaded', e => {
     const config = {
@@ -134,7 +135,7 @@ document.addEventListener('DOMContentLoaded', e => {
                 players.delete(parseInt(data.player, 10))
                 this.otherPlayers.getChildren().forEach(el => {
                     if (el.playerID === parseInt(data.player, 10)) {
-                        el.disableBody(true, true)
+                        el.destroy()
                     }
                 })
             }
@@ -168,7 +169,8 @@ document.addEventListener('DOMContentLoaded', e => {
                     }
                 })
             }
-            if (msg.type === 'PLAYERS') {
+
+            if (msg.type === SOCKET_COUNT) {
                 //console.log(msg.data)
             }
         }
@@ -214,7 +216,7 @@ document.addEventListener('DOMContentLoaded', e => {
             this.player.setFlipX(true)
         } else if (this.player.body.velocity.x === 0 && this.player.body.velocity.y === 0) {
             if (isPlayerUsing) {
-                console.log('**running minigame**')
+                // console.log('**running minigame**')
             } else {
                 sendIdle()
                 this.player.play('idle', true)
