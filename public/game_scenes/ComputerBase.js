@@ -9,6 +9,6 @@ class ComputerBase extends Phaser.Scene {
 
   create() {
     this.computer = this.add.sprite(400, 300, 'computer')
-    this.computer.setScale(1.60)
+    this.computer.setScale(2)
   }
 }
