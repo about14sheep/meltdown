@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', e => {
         }
     }
     const game = new Phaser.Game(config)
-    const ws = new WebSocket(`ws://localhost:3000`)
+    const ws = new WebSocket(`ws://localhost:8080`)
     const playerID = Math.floor(Math.random() * 11)
     const players = new Map()
 
