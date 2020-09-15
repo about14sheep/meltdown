@@ -1,18 +1,18 @@
 import Phaser from 'phaser'
-
+import Player from '../controllers/Player'
 export default class MainScene extends Phaser.Scene {
   constructor() {
     super({ key: 'main', active: true })
+    this.playersMap = new Map()
   }
 
   preload() {
-    this.load.image('grass', 'assets/grass.png')
     this.load.image('grass', '../assets/grass.png')
     this.load.spritesheet('tiles', '../assets/factory_tileset.png', {
       frameWidth: 16,
       frameHeight: 16
     })
-    this.load.spritesheet('scientist', 'assets/scientist_spritesheet.png', {
+    this.load.spritesheet('scientist', '../assets/scientist_spritesheet.png', {
       frameWidth: 48,
       frameHeight: 48
     })
@@ -23,10 +23,23 @@ export default class MainScene extends Phaser.Scene {
     this.grass = this.add.image(400, 300, 'grass')
     this.grass.setScale(2.5)
     this.map = this.make.tilemap({ key: 'map' })
+
+    this.player = new Player(this, 400, 300)
+
     const tileset = map.addTilesetImage("factory_tileset", "tiles")
     this.configureMapLayersFromTileset(tileset)
     this.createAnimsForScientist()
 
+    this.otherPlayers = this.physics.add.group()
+
+  }
+
+  update() {
+    this.player.isPlayerUsing = false
+  }
+
+  useTile() {
+    this.player.isPlayerUsing = true
   }
 
   configureMapLayersFromTileset(tileset) {
@@ -47,6 +60,7 @@ export default class MainScene extends Phaser.Scene {
 
     const usableBottoms = map.createStaticLayer('usable_bottom', tileset, 0, 0)
     usableBottoms.setScale(3)
+    usableBottoms.setTileIndexCallback(['1325', '1277'], useTile, this.player)
 
     const usableTops = map.createStaticLayer('usable_top', tileset, 0, 0)
     usableTops.setScale(3)
@@ -89,6 +103,16 @@ export default class MainScene extends Phaser.Scene {
       frameRate: 1,
     })
 
+  }
+
+  addOtherPlayers(data) {
+    const id = parseInt(data.player, 10)
+    this.playersMap.set(id, data.position)
+    if (id != this.player.ID) {
+      const otherPlayer = new Player(this, data.position.x, data.position.y)
+      otherPlayer.ID = id
+      this.otherPlayers.add(otherPlayer)
+    }
   }
 
 }

@@ -7,6 +7,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.isPlayerUsing = false
     this.lastAnim = null
     this.velocity = 200
+    this.ID = null
 
     this.scene.world.enable(this)
     this.scene.add.existing(this)
@@ -26,6 +27,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     const keys = this.keys
     let currentAnimKey = 'idle'
 
+    this.body.setVelocityY(0)
+    this.body.setVelocityX(0)
+
     if (keys.left.isDown) {
       this.body.setVelocityX(-this.velocity)
       this.setFlipX(true)
@@ -42,6 +46,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     if (this.body.velocity != 0) {
       currentAnimKey = 'walking'
+    } else if (this.isPlayerUsing) {
+      currentAnimKey = 'using'
     } else {
       currentAnimKey = 'idle'
     }

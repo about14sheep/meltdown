@@ -3,7 +3,7 @@ require('dotenv').config();
 
 const app = express()
 
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(__dirname + '/dist'))
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
