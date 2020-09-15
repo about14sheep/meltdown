@@ -1,5 +1,8 @@
-// import Phaser from 'phaser'
-class ComputerBase extends Phaser.Scene {
+import Phaser from 'phaser'
+
+import ComputerBaseImage from '../assets/computer_screen_base.png'
+import AttemptButton from '../assets/minigame_button.png'
+export default class ComputerBase extends Phaser.Scene {
   constructor() {
     super({ key: 'computer', active: true })
     this.currentGame = ''
@@ -8,8 +11,8 @@ class ComputerBase extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('computerbase', '../assets/computer_screen_base.png')
-    this.load.image('attemptButton', '../assets/minigame_button.png')
+    this.load.image('computerbase', ComputerBaseImage)
+    this.load.image('attemptButton', AttemptButton)
   }
 
   create() {

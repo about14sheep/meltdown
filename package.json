@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "start": "node app.js",
+    "dev": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
   },
@@ -14,11 +15,13 @@
   "dependencies": {
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "lodash": "^4.17.20",
-    "phaser": "^3.24.1"
+    "lodash": "^4.17.20"
   },
   "devDependencies": {
+    "file-loader": "^6.1.0",
+    "phaser": "^3.24.1",
     "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
   }
 }

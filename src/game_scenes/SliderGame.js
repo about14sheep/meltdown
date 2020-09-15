@@ -1,4 +1,8 @@
-class SliderGame extends Phaser.Scene {
+import Phaser from 'phaser'
+
+import SliderGameBaseImage from '../assets/slidergame_assets/slidergame_base.png'
+import SliderGameBar from '../assets/slidergame_assets/slidergame_bar.png'
+export default class SliderGame extends Phaser.Scene {
   constructor(handle) {
     super(handle)
     this.barMax = 555
@@ -11,8 +15,8 @@ class SliderGame extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('sliderGameBase', '../assets/slidergame_assets/slidergame_base.png')
-    this.load.image('sliderGameBar', '../assets/slidergame_assets/slidergame_bar.png')
+    this.load.image('sliderGameBase', SliderGameBaseImage)
+    this.load.image('sliderGameBar', SliderGameBar)
   }
 
   create() {
