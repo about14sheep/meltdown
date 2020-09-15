@@ -1,5 +1,7 @@
 import Phaser from 'phaser'
+
 import Player from '../controllers/Player'
+import SliderGame from './SliderGame'
 
 import ScientistSpritesheet from '../assets/scientist_spritesheet.png'
 import Grass from '../assets/grass.png'
@@ -32,8 +34,9 @@ export default class MainScene extends Phaser.Scene {
     const tileset = this.map.addTilesetImage("factory_tileset", "tiles")
     this.createAnimsForScientist()
 
-    const [floor, walls, usableTops, computers, desks, usableBottoms, pipes] = this.configureMapLayersFromTileset(tileset)
+    const [walls, usableTops, computers, desks, usableBottoms, pipes] = this.configureMapLayersFromTileset(tileset)
     this.player = new Player(this, 400, 300)
+    usableBottoms.setTileIndexCallback(['1325', '1277'], this.useTile, this.player)
     this.physics.add.collider(this.player, walls)
     this.physics.add.collider(this.player, usableTops)
     this.physics.add.collider(this.player, computers)
@@ -43,10 +46,21 @@ export default class MainScene extends Phaser.Scene {
 
     this.otherPlayers = this.physics.add.group()
     this.cameras.main.startFollow(this.player)
+    this.computer = this.scene.get('computer')
+    const sliderGameKey = 'sliderGame'
+    const sliderGame = new SliderGame(sliderGameKey)
+    this.computer.loadMiniGame(sliderGameKey, sliderGame)
+
   }
 
   update() {
     this.player.update()
+    if (this.player.isPlayerUsing) {
+      this.computer.displayMiniGame('sliderGame')
+    } else {
+      this.computer.hideMiniGame()
+    }
+
   }
 
   useTile(player) {
