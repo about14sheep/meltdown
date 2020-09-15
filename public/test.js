@@ -14,11 +14,11 @@ document.addEventListener('DOMContentLoaded', e => {
         physics: {
             default: 'arcade',
         },
-        scene: {
+        scene: [{
             preload: preload,
             create: create,
             update: update
-        }
+        }, ComputerBase]
     }
     const game = new Phaser.Game(config)
     const ws = new WebSocket(`ws://localhost:8080`)
@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', e => {
             frameHeight: 48
         })
         this.load.tilemapTiledJSON('map', 'assets/meltdown_start_room.json')
-        this.load.image('otherDude', 'assets/favicon.png')
 
     }
 
@@ -66,10 +65,11 @@ document.addEventListener('DOMContentLoaded', e => {
             frameRate: 1,
         })
 
-        const key = 'computer'
-        const computer = new ComputerBase(key)
-        this.scene.add(key, computer, true)
-
+        this.computer = this.scene.get('computer')
+        const sliderGameKey = 'sliderGame'
+        const sliderGame = new SliderGame(sliderGameKey)
+        this.computer.loadMiniGame(sliderGameKey, sliderGame)
+        this.computer.setWebSocket(ws)
         const tileset = map.addTilesetImage("factory_tileset", "tiles")
         const floor = map.createStaticLayer('floor', tileset, 0, 0)
         floor.setScale(3)
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', e => {
         this.player.setVelocityX(0)
 
         let isPlayerUsing = false
-        this.scene.sendToBack('computer')
+        this.computer.hideMiniGame()
         if (this.player.anims.currentAnim && this.player.anims.currentAnim.key == 'using') {
             isPlayerUsing = true
             sendUsing()
@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', e => {
             this.player.setFlipX(true)
         } else if (this.player.body.velocity.x === 0 && this.player.body.velocity.y === 0) {
             if (isPlayerUsing) {
-                this.scene.bringToTop('computer')
+                this.computer.displayMiniGame('sliderGame')
             } else {
                 sendIdle()
                 this.player.play('idle', true)
