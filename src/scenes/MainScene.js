@@ -1,6 +1,4 @@
-import Phaser from 'phaser'
-
-import Player from '../controllers/Player'
+import Player from '../objects/Player'
 import SliderGame from './SliderGame'
 
 import ScientistSpritesheet from '../assets/scientist_spritesheet.png'

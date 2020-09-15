@@ -1,5 +1,3 @@
-import Phaser from 'phaser'
-
 import SliderGameBaseImage from '../assets/slidergame_assets/slidergame_base.png'
 import SliderGameBar from '../assets/slidergame_assets/slidergame_bar.png'
 export default class SliderGame extends Phaser.Scene {

@@ -1,7 +1,7 @@
-import Phaser from 'phaser'
+import 'phaser'
 
-import MainScene from './game_scenes/MainScene'
-import ComputerBase from './game_scenes/ComputerBase'
+import MainScene from './scenes/MainScene'
+import ComputerBase from './scenes/ComputerBase'
 
 const config = {
   type: Phaser.AUTO,

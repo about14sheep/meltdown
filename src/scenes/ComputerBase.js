@@ -1,5 +1,3 @@
-import Phaser from 'phaser'
-
 import ComputerBaseImage from '../assets/computer_screen_base.png'
 import AttemptButton from '../assets/minigame_button.png'
 export default class ComputerBase extends Phaser.Scene {
