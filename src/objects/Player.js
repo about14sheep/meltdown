@@ -1,14 +1,18 @@
+const PLAYER_POSITION = 'PLAYER_POSITION'
+const PLAYER_USING = 'PLAYER_USING'
+const PLAYER_IDLE = 'PLAYER_IDLE'
+
 export default class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
     super(scene, x, y, 'scientist')
-    this.scene = scene
+    this.ws = scene.socket
     this.isPlayerUsing = false
     this.lastAnim = null
     this.velocity = 200
+    this.keys = scene.input.keyboard.addKeys('W,S,A,D')
     this.ID = null
     scene.add.existing(this)
     scene.physics.add.existing(this)
-    this.keys = this.scene.input.keyboard.addKeys('W,S,A,D')
   }
 
   update() {
@@ -42,7 +46,56 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     if (this.lastAnim !== currentAnimKey) {
       this.lastAnim = currentAnimKey
+      this.animSwitch(currentAnimKey)
       this.anims.play(currentAnimKey, true)
     }
+  }
+
+  animSwitch(key) {
+    switch (key) {
+      case 'walking':
+        this.sendPosition()
+        break
+      case 'using':
+        this.sendUsing()
+        break
+      default:
+        this.sendIdle()
+    }
+  }
+
+  sendPosition() {
+    const msg = {
+      type: PLAYER_POSITION,
+      data: {
+        player: this.ID,
+        position: {
+          x: this.x,
+          y: this.y
+        },
+        direction: this.flipX
+      }
+    }
+    return this.ws.sendMessage(msg)
+  }
+
+  sendIdle() {
+    const msg = {
+      type: PLAYER_IDLE,
+      data: {
+        player: this.ID
+      }
+    }
+    return this.ws.sendMessage(msg)
+  }
+
+  sendUsing() {
+    const msg = {
+      type: PLAYER_USING,
+      data: {
+        player: this.ID
+      }
+    }
+    return this.ws.sendMessage(msg)
   }
 }

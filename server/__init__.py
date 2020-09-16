@@ -9,7 +9,7 @@ REDIS_URL = os.environ.get('REDIS_URL')
 REDIS_CHAN = 'game'
 
 app = Flask(__name__)
-app.debug = 'DEBUG' in os.environ
+logging.basicConfig(level=logging.DEBUG)
 sockets = Sockets(app)
 redis = redis.from_url(REDIS_URL)
 
@@ -64,7 +64,7 @@ def submit_state(ws):
             redis.publish(REDIS_CHAN, message)
 
 
-@sockets.route('/recieve')
+@sockets.route('/receive')
 def recieve_state(ws):
     server.register(ws)
     while not ws.closed:

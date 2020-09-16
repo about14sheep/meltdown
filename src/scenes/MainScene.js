@@ -5,11 +5,10 @@ import ScientistSpritesheet from '../assets/scientist_spritesheet.png'
 import Grass from '../assets/grass.png'
 import FactoryTiles from '../assets/factory_tileset.png'
 import layout from '../assets/meltdown_start_room.json'
-import GameState from '../objects/GameState'
+import Socket from '../objects/Socket'
 export default class MainScene extends Phaser.Scene {
   constructor() {
     super({ key: 'main', active: true })
-    this.playersMap = new Map()
   }
 
   preload() {
@@ -34,8 +33,8 @@ export default class MainScene extends Phaser.Scene {
     this.createAnimsForScientist()
 
     const [walls, usableTops, computers, desks, usableBottoms, pipes] = this.configureMapLayersFromTileset(tileset)
+    this.socket = new Socket(this)
     this.player = new Player(this, 400, 300)
-    this.gameState = new GameState(this)
     usableBottoms.setTileIndexCallback(['1325', '1277'], this.useTile, this.player)
     this.physics.add.collider(this.player, walls)
     this.physics.add.collider(this.player, usableTops)
@@ -55,6 +54,7 @@ export default class MainScene extends Phaser.Scene {
 
   update() {
     this.player.update()
+    this.socket.update()
     if (this.player.isPlayerUsing) {
       this.computer.displayMiniGame('sliderGame')
     } else {
@@ -122,16 +122,6 @@ export default class MainScene extends Phaser.Scene {
       frameRate: 1,
     })
 
-  }
-
-  addOtherPlayers(data) {
-    const id = parseInt(data.player, 10)
-    this.playersMap.set(id, data.position)
-    if (id != this.player.ID) {
-      const otherPlayer = new Player(this, data.position.x, data.position.y)
-      otherPlayer.ID = id
-      this.otherPlayers.add(otherPlayer)
-    }
   }
 
 }
