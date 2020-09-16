@@ -5,7 +5,7 @@ import gevent
 from flask import Flask
 from flask_sockets import Sockets
 
-REDIS_URL = os.environ['REDIS_URL']
+REDIS_URL = os.environ.get('REDIS_URL')
 REDIS_CHAN = 'game'
 
 app = Flask(__name__)
