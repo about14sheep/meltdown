@@ -5,6 +5,7 @@ import ScientistSpritesheet from '../assets/scientist_spritesheet.png'
 import Grass from '../assets/grass.png'
 import FactoryTiles from '../assets/factory_tileset.png'
 import layout from '../assets/meltdown_start_room.json'
+import GameState from '../objects/GameState'
 export default class MainScene extends Phaser.Scene {
   constructor() {
     super({ key: 'main', active: true })
@@ -34,6 +35,7 @@ export default class MainScene extends Phaser.Scene {
 
     const [walls, usableTops, computers, desks, usableBottoms, pipes] = this.configureMapLayersFromTileset(tileset)
     this.player = new Player(this, 400, 300)
+    this.gameState = new GameState(this)
     usableBottoms.setTileIndexCallback(['1325', '1277'], this.useTile, this.player)
     this.physics.add.collider(this.player, walls)
     this.physics.add.collider(this.player, usableTops)

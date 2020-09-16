@@ -1,1 +1,8 @@
-websockets
+flask
+python-dotenv
+sqlalchemy
+flask-sqlalchemy
+psycopg2-binary
+flask-sockets
+gunicorn
+redis

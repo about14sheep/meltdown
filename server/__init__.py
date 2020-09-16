@@ -58,7 +58,7 @@ def index():
 def submit_state(ws):
     while not ws.closed:
         gevent.sleep(0.1)
-        message = ws.recieve()
+        message = ws.receive()
         if message:
             app.logger.info(u'Inserting message: {}'.format(message))
             redis.publish(REDIS_CHAN, message)

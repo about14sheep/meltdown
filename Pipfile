@@ -6,6 +6,14 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
+flask = "*"
+python-dotenv = "*"
+sqlalchemy = "*"
+flask-sqlalchemy = "*"
+psycopg2-binary = "*"
+flask-sockets = "*"
+gunicorn = "*"
+redis = "*"
 
 [requires]
 python_version = "3.8"
