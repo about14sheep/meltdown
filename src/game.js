@@ -1,4 +1,5 @@
 import 'phaser'
+import ReconnectingWebSocket from 'reconnecting-websocket'
 
 import MainScene from './scenes/MainScene'
 import ComputerBase from './scenes/ComputerBase'
@@ -14,3 +15,5 @@ const config = {
 }
 
 export const game = new Phaser.Game(config)
+export const incoming = new ReconnectingWebSocket('ws://localhost:3000/recieve')
+export const outgoing = new ReconnectingWebSocket('ws://localhost:3000/submit')

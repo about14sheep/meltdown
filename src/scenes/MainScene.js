@@ -90,7 +90,7 @@ export default class MainScene extends Phaser.Scene {
 
     const pipes = this.map.createStaticLayer('pipes', tileset, 0, 0)
     pipes.setScale(3)
-    pipes.setCollisionBetween(0, 10000)
+    pipes.setCollisionBetween(1, 10000)
 
     const accents = this.map.createStaticLayer('accents', tileset, 0, 0)
     accents.setScale(3)
