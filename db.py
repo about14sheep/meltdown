@@ -1,14 +1,21 @@
+from werkzeug.security import generate_password_hash
+from dotenv import load_dotenv
+
 from server.models import User, Lobby
 from server import app, db
 
+load_dotenv()
 
 with app.app_context():
     db.drop_all()
     db.create_all()
 
-    ian = User(username='Ian', hashed_password='password')
-    javier = User(username='Javier', hashed_password='password')
-    dean = User(username='Dean', hashed_password='password')
+    ian = User(username='Ian',
+               hashed_password=generate_password_hash('password'))
+    javier = User(username='Javier',
+                  hashed_password=generate_password_hash('password'))
+    dean = User(username='Dean',
+                hashed_password=generate_password_hash('password'))
 
     lobby1 = Lobby(name='Lobby One', player_max=10)
     lobby2 = Lobby(name='lobby two', player_max=8)

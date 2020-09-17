@@ -11,7 +11,7 @@ export default class Socket extends Phaser.GameObjects.Container {
     this.incoming.onmessage = async function (e) {
       const res = await e.data.text()
       const data = JSON.parse(res)
-      console.log(data.data)
+      // console.log(data.data)
     }
   }
 

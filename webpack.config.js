@@ -13,10 +13,13 @@ module.exports = {
       {
         test: /\.(png|jpg|gif)$/,
         use: [
-          'file-loader'
+          'file-loader',
         ]
+      },
+      {
+        test: /\.html$/i,
+        loader: 'html-loader',
       }
-
     ]
   },
   devServer: {

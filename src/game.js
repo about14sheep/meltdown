@@ -2,6 +2,7 @@ import 'phaser'
 
 import MainScene from './scenes/MainScene'
 import ComputerBase from './scenes/ComputerBase'
+import Menus from './scenes/Menus'
 
 const config = {
   type: Phaser.AUTO,
@@ -10,7 +11,11 @@ const config = {
   physics: {
     default: 'arcade',
   },
-  scene: [ComputerBase, MainScene]
+  parent: 'menus-overlay',
+  dom: {
+    createContainer: true
+  },
+  scene: [Menus, ComputerBase, MainScene]
 }
 
 export const game = new Phaser.Game(config)

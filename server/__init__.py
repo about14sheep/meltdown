@@ -4,6 +4,7 @@ import redis
 import gevent
 from flask import Flask
 from flask_sockets import Sockets
+from flask_login import LoginManager
 
 from .config import Config
 from .models import db, User, Lobby
@@ -17,6 +18,7 @@ logging.basicConfig(level=logging.DEBUG)
 sockets = Sockets(app)
 redis = redis.from_url(REDIS_URL)
 db.init_app(app)
+login_manager = LoginManager()
 
 
 class WebSocket:
