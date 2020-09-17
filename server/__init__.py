@@ -5,13 +5,18 @@ import gevent
 from flask import Flask
 from flask_sockets import Sockets
 
+from .config import Config
+from .models import db, User, Lobby
+
 REDIS_URL = os.environ.get('REDIS_URL')
 REDIS_CHAN = 'game'
 
 app = Flask(__name__)
+app.config.from_object(Config)
 logging.basicConfig(level=logging.DEBUG)
 sockets = Sockets(app)
 redis = redis.from_url(REDIS_URL)
+db.init_app(app)
 
 
 class WebSocket:
@@ -51,7 +56,8 @@ server.start()
 
 @app.route('/')
 def index():
-    return 'Access Restricted'
+    res = User.query.all()
+    return {'users': [user.to_dict() for user in res]}
 
 
 @sockets.route('/submit')

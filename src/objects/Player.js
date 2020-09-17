@@ -38,12 +38,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.body.velocity.x != 0 || this.body.velocity.y != 0) {
       this.isPlayerUsing = false
       currentAnimKey = 'walking'
+      this.sendPosition()
     } else if (this.isPlayerUsing) {
       currentAnimKey = 'using'
     } else {
       currentAnimKey = 'idle'
     }
-
     if (this.lastAnim !== currentAnimKey) {
       this.lastAnim = currentAnimKey
       this.animSwitch(currentAnimKey)
@@ -53,9 +53,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   animSwitch(key) {
     switch (key) {
-      case 'walking':
-        this.sendPosition()
-        break
       case 'using':
         this.sendUsing()
         break
