@@ -8,14 +8,29 @@ export default class LoginForm extends Phaser.GameObjects.DOMElement {
     scene.add.existing(this)
   }
 
+  async login(username, password) {
+    const res = await fetch('http://localhost:3000/api/session', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username, password })
+    })
+    const data = await res.json()
+    console.log(data)
+    return data
+  }
+
   configureSubmitEvent() {
     const submit = this.getChildByID('submit')
     submit.addEventListener('click', this.submitHandler.bind(this))
   }
 
   submitHandler() {
-    console.log(this.usernameInput.value, this.passwordInput.value)
+    const login = this.login(this.usernameInput.value, this.passwordInput.value)
   }
+
+
 
 
 }

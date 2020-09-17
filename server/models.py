@@ -48,6 +48,8 @@ class User(db.Model):
         return {
             'id': self.id,
             'username': self.username,
+            'hashed_password': self.hashed_password,
+            'session_token': self.session_token,
             'lobbies': [lobby.to_dict() for lobby in self.lobbies]
         }
 
