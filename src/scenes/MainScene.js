@@ -9,8 +9,9 @@ import FactoryTiles from '../assets/factory_tileset.png'
 import layout from '../assets/meltdown_start_room.json'
 
 export default class MainScene extends Phaser.Scene {
-  constructor() {
-    super({ key: 'main', active: true })
+  constructor(handle, data) {
+    super(handle)
+    this.playerData = data
   }
 
   preload() {
@@ -36,7 +37,7 @@ export default class MainScene extends Phaser.Scene {
 
     const [walls, usableTops, computers, desks, usableBottoms, pipes] = this.configureMapLayersFromTileset(tileset)
     this.socket = new Socket(this)
-    this.player = new Player(this, 400, 300)
+    this.player = new Player(this, 400, 300, this.playerData.id, this.playerData.username)
     this.gameState = new GameState(this)
     usableBottoms.setTileIndexCallback(['1325', '1277'], this.useTile, this.player)
     this.physics.add.collider(this.player, walls)
@@ -52,7 +53,6 @@ export default class MainScene extends Phaser.Scene {
     const sliderGameKey = 'sliderGame'
     const sliderGame = new SliderGame(sliderGameKey)
     this.computer.loadMiniGame(sliderGameKey, sliderGame)
-
   }
 
   update() {

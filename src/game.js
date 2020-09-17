@@ -2,7 +2,7 @@ import 'phaser'
 
 import MainScene from './scenes/MainScene'
 import ComputerBase from './scenes/ComputerBase'
-import Menus from './scenes/Menus'
+import Login from './scenes/Login'
 
 const config = {
   type: Phaser.AUTO,
@@ -15,7 +15,7 @@ const config = {
   dom: {
     createContainer: true
   },
-  scene: [Menus, ComputerBase]
+  scene: [Login, ComputerBase]
 }
 
 export const game = new Phaser.Game(config)

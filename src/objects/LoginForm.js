@@ -16,9 +16,15 @@ export default class LoginForm extends Phaser.GameObjects.DOMElement {
       },
       body: JSON.stringify({ username, password })
     })
-    const data = await res.json()
-    console.log(data)
-    return data
+    if (res.ok) {
+      const { token, user } = await res.json()
+      window.localStorage.setItem('meltdown/auth/token', token)
+      window.localStorage.setItem('meltdown/auth/user', JSON.stringify(user))
+    } else {
+      const data = await res.json()
+      console.error(`Error logging user in. Returned JSON: ${data}`)
+    }
+
   }
 
   configureSubmitEvent() {

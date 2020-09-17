@@ -3,14 +3,15 @@ const PLAYER_USING = 'PLAYER_USING'
 const PLAYER_IDLE = 'PLAYER_IDLE'
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y) {
+  constructor(scene, x, y, id, username) {
     super(scene, x, y, 'scientist')
     this.ws = scene.socket
     this.isPlayerUsing = false
     this.lastAnim = null
     this.velocity = 200
     this.keys = scene.input.keyboard.addKeys('W,S,A,D')
-    this.ID = null
+    this.ID = id
+    this.username = username
     scene.add.existing(this)
     scene.physics.add.existing(this)
   }
