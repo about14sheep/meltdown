@@ -12,7 +12,8 @@ users_lobbies = db.Table('userslobbies',
                          db.Column(
                              'lobby_id',
                              db.Integer,
-                             db.ForeignKey('lobbies.id')
+                             db.ForeignKey('lobbies.id'),
+                             primary_key=True
                          ))
 
 
