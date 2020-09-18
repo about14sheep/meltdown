@@ -9,9 +9,10 @@ import FactoryTiles from '../assets/factory_tileset.png'
 import layout from '../assets/meltdown_start_room.json'
 
 export default class MainScene extends Phaser.Scene {
-  constructor(handle, data) {
+  constructor(handle, data, lobbyID) {
     super(handle)
     this.playerData = data
+    this.lobbyID = lobbyID
   }
 
   preload() {

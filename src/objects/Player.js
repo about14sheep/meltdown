@@ -6,6 +6,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, id, username) {
     super(scene, x, y, 'scientist')
     this.ws = scene.socket
+    this.lobby = 1
     this.isPlayerUsing = false
     this.lastAnim = null
     this.velocity = 200
@@ -65,6 +66,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   sendPosition() {
     const msg = {
       type: PLAYER_POSITION,
+      lobby: this.lobby,
       data: {
         player: this.ID,
         position: {
@@ -80,6 +82,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   sendIdle() {
     const msg = {
       type: PLAYER_IDLE,
+      lobby: this.lobby,
       data: {
         player: this.ID
       }
@@ -90,6 +93,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   sendUsing() {
     const msg = {
       type: PLAYER_USING,
+      lobby: this.lobby,
       data: {
         player: this.ID
       }

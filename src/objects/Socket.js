@@ -1,22 +1,20 @@
-import ReconnectingWebSocket from 'reconnecting-websocket'
+import io from 'socket.io-client'
 
 export default class Socket extends Phaser.GameObjects.Container {
   constructor(scene) {
     super(scene)
-    this.incoming = new ReconnectingWebSocket('ws://localhost:3000/receive')
-    this.outgoing = new ReconnectingWebSocket('ws://localhost:3000/submit')
+    this.lobbyId = scene.lobbyID
+    this.socket = io('ws://localhost:5000')
   }
 
-  update() {
-    this.incoming.onmessage = async function (e) {
-      const res = await e.data.text()
-      const data = JSON.parse(res)
-      // console.log(data.data)
-    }
+  create(){
+    this.socket.on('connection', socket => {
+      socket.join(this.lobbyID)
+    })
   }
 
   sendMessage(msg) {
-    this.outgoing.send(JSON.stringify(msg))
+    // this.socket.to(this.lobbyID).emit('message')
   }
 
 }

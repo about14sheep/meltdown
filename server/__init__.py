@@ -3,9 +3,9 @@ from .config import Config
 import os
 import logging
 import redis
-import gevent
+import eventlet
 from flask import Flask, request, jsonify
-from flask_sockets import Sockets
+from flask_socketio import SocketIO, join_room, leave_room
 from flask_cors import CORS
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_jwt_extended import (
@@ -19,47 +19,15 @@ REDIS_CHAN = 'game'
 app = Flask(__name__)
 app.config.from_object(Config)
 logging.basicConfig(level=logging.DEBUG)
-sockets = Sockets(app)
 redis = redis.from_url(REDIS_URL)
+socketio = SocketIO(app, cors_allowed_origins='http://localhost:8080')
 db.init_app(app)
 login_manager = LoginManager(app)
 jwt = JWTManager(app)
 CORS(app)
 
-
-class WebSocket:
-    def __init__(self):
-        self.clients = list()
-        self.pubsub = redis.pubsub()
-        self.pubsub.subscribe(REDIS_CHAN)
-
-    def __iter_data(self):
-        for message in self.pubsub.listen():
-            data = message.get('data')
-            if message['type'] == 'message':
-                app.logger.info(u'Sending message: {}'.format(data))
-                yield data
-
-    def register(self, client):
-        self.clients.append(client)
-
-    def send(self, client, data):
-        try:
-            client.send(data)
-        except Exception:
-            self.clients.remove(client)
-
-    def run(self):
-        for data in self.__iter_data():
-            for client in self.clients:
-                gevent.spawn(self.send, client, data)
-
-    def start(self):
-        gevent.spawn(self.run)
-
-
-server = WebSocket()
-server.start()
+if __name__ == "__main__":
+    socketio.run(app)
 
 
 @app.route('/')
@@ -107,18 +75,29 @@ def auth():
     return jsonify({'user': user.to_dict(), 'token': access_token}), 200
 
 
-@sockets.route('/submit')
-def submit_state(ws):
-    while not ws.closed:
-        gevent.sleep(0.1)
-        message = ws.receive()
-        if message:
-            app.logger.info(u'Inserting message: {}'.format(message))
-            redis.publish(REDIS_CHAN, message)
+@socketio.on('join')
+def on_join(data):
+    print(data)
+    userId = data['userId']
+    room = data['room']
+    join_room(room)
+    send(userIs + ' has entered the room.', room=room)
 
 
-@sockets.route('/receive')
-def recieve_state(ws):
-    server.register(ws)
-    while not ws.closed:
-        gevent.sleep(0.1)
+@socketio.on('leave')
+def on_leave(data):
+    print(data)
+    userId = data['userId']
+    room = data['room']
+    leave_room(room)
+    send(userId + ' has left the room.', room=room)
+
+
+@socketio.on('connect')
+def handle_connection():
+    print('hi')
+
+
+@socketio.on('message')
+def handle_message(message):
+    print(message)

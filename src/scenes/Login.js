@@ -16,7 +16,7 @@ export default class Login extends Phaser.Scene {
     if (!this.token || !this.user) {
       const domElement = new LoginForm(this, 400, 300)
     } else {
-      const main = new MainScreen({ key: 'main', active: true }, JSON.parse(this.user))
+      const main = new MainScreen({ key: 'main', active: true }, JSON.parse(this.user), 1)
       this.game.scene.add('main', main)
     }
   }
