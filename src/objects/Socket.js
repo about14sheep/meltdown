@@ -1,20 +1,45 @@
-import io from 'socket.io-client'
+import io, { managers } from 'socket.io-client'
 
 export default class Socket extends Phaser.GameObjects.Container {
   constructor(scene) {
     super(scene)
-    this.socket = io('http://localhost:5000')
+    this.scene = scene
+    this.socket = io('ws://localhost:3000')
     this.lobbyId = scene.lobbyID
-    this.configure(this.socket, scene.lobbyID)
+    this.configure(this.socket)
   }
 
-  configure(socket, room) {
-    socket.emit('join', room)
 
-    socket.on('message', function (msg) {
-      console.log(msg)
+  configure(socket) {
+    socket.on('connect', _ => {
+      socket.emit('join', { playerId: this.scene.player.ID, username: this.scene.player.username, lobby: this.lobbyId })
+    })
+
+    socket.on('disconnect', _ => {
+      socket.emit('leave', { playerId: this.scene.player.ID, username: this.scene.player.username, lobby: this.lobbyId })
+    })
+
+    socket.on('message', msg => {
+      this.scene.gameState.addOtherPlayers(msg.data)
+      if (managers.type === 'PLAYER_SYNC') {
+        console.log('hi')
+        socket.send({ type: 'PLAYER_SYNC', data: { lobby: this.lobbyId } })
+      }
+      if (msg.type === 'PLAYER_DISCONNECT') {
+        this.scene.gameState.removePlayers(msg.data)
+      }
+      if (msg.type === 'PLAYER_POSITION') {
+        this.scene.gameState.updatePositions(msg.data)
+      }
+      if (msg.type === 'PLAYER_IDLE') {
+        this.scene.gameState.updateIdle(msg.data)
+      }
+      if (msg.type === 'PLAYER_USING') {
+        this.scene.gameState.updateUsing(msg.data)
+      }
     })
   }
+
 
   sendMessage(msg) {
     this.socket.emit('message', msg, this.lobbyId)

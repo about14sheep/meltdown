@@ -2,8 +2,8 @@ from .models import db, User, Lobby
 from .config import Config
 import os
 import logging
-import redis
 import eventlet
+import redis
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 from flask_cors import CORS
@@ -74,19 +74,37 @@ def auth():
 
 @socketio.on('join')
 def on_join(data):
-    join_room(data)
-    send(' has entered the room.', room=data)
+    join_room(data['lobby'])
+    msg = {
+        'type': 'PLAYER_CONNECTION',
+        'lobby': data['lobby'],
+        'data': {
+            'player': data['playerId'],
+            'username': data['username'],
+            'position': {
+                'x': 400,
+                'y': 300
+            }
+        }
+    }
+    send(msg, room=data['lobby'])
 
 
 @socketio.on('leave')
 def on_leave(data):
-    leave_room(data)
-    send(' has left the room.', room=data)
+    leave_room(data['lobby'])
+    msg = {
+        'type': 'PLAYER_DISONNECT',
+        'data': {
+            'player': data['playerId']
+        }
+    }
+    send(msg, room=data['lobby'])
 
 
 @socketio.on('message')
 def handle_message(message, room):
-    emit('message', message, room=room)
+    send(message, room=room)
 
 
 if __name__ == "__main__":
