@@ -5,7 +5,7 @@ import logging
 import redis
 import eventlet
 from flask import Flask, request, jsonify
-from flask_socketio import SocketIO, join_room, leave_room
+from flask_socketio import SocketIO, join_room, leave_room, send, emit
 from flask_cors import CORS
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_jwt_extended import (
@@ -25,9 +25,6 @@ db.init_app(app)
 login_manager = LoginManager(app)
 jwt = JWTManager(app)
 CORS(app)
-
-if __name__ == "__main__":
-    socketio.run(app)
 
 
 @app.route('/')
@@ -77,27 +74,20 @@ def auth():
 
 @socketio.on('join')
 def on_join(data):
-    print(data)
-    userId = data['userId']
-    room = data['room']
-    join_room(room)
-    send(userIs + ' has entered the room.', room=room)
+    join_room(data)
+    send(' has entered the room.', room=data)
 
 
 @socketio.on('leave')
 def on_leave(data):
-    print(data)
-    userId = data['userId']
-    room = data['room']
-    leave_room(room)
-    send(userId + ' has left the room.', room=room)
-
-
-@socketio.on('connect')
-def handle_connection():
-    print('hi')
+    leave_room(data)
+    send(' has left the room.', room=data)
 
 
 @socketio.on('message')
-def handle_message(message):
-    print(message)
+def handle_message(message, room):
+    emit('message', message, room=room)
+
+
+if __name__ == "__main__":
+    socketio.run(app)

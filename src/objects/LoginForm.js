@@ -9,7 +9,7 @@ export default class LoginForm extends Phaser.GameObjects.DOMElement {
   }
 
   async login(username, password) {
-    const res = await fetch('http://localhost:3000/api/session', {
+    const res = await fetch('http://localhost:5000/api/session', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
