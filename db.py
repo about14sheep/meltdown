@@ -11,11 +11,11 @@ with app.app_context():
     db.create_all()
 
     ian = User(username='Ian',
-               hashed_password=generate_password_hash('password'))
+               password='password')
     javier = User(username='Javier',
-                  hashed_password=generate_password_hash('password'))
+                  password='password')
     dean = User(username='Dean',
-                hashed_password=generate_password_hash('password'))
+                password='password')
 
     lobby1 = Lobby(name='Lobby One', player_max=10)
     lobby2 = Lobby(name='lobby two', player_max=8)

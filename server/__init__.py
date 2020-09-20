@@ -27,6 +27,11 @@ jwt = JWTManager(app)
 CORS(app)
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
+
 @app.route('/')
 def index():
     res = User.query.all()
@@ -56,17 +61,19 @@ def auth():
 
     if request.method == 'PUT':
         user = User.query.filter(User.username == username).first()
+        print(user.password == password)
+        print(user.check_password('password'))
         if not user or not user.check_password(password):
-            return jsonify({"msg": "Password or Username do match"}), 401
+            return jsonify({"msg": "Password or Username dont match"}), 401
     elif request.method == 'POST':
         username = request.json.get('username', None)
         if not username:
             return jsonify({"msg": "Missing username"}), 400
         user = User(username=username)
         user.password = password
-
     access_token = create_access_token(identity=username)
     user.session_token = access_token
+    login_user(user)
     db.session.add(user)
     db.session.commit()
     return jsonify({'user': user.to_dict(), 'token': access_token}), 200
@@ -100,6 +107,11 @@ def on_leave(data):
         }
     }
     send(msg, room=data['lobby'])
+
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    pass
 
 
 @socketio.on('message')

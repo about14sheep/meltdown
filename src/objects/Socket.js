@@ -21,11 +21,9 @@ export default class Socket extends Phaser.GameObjects.Container {
 
     socket.on('message', msg => {
       this.scene.gameState.addOtherPlayers(msg.data)
-      if (managers.type === 'PLAYER_SYNC') {
-        console.log('hi')
-        socket.send({ type: 'PLAYER_SYNC', data: { lobby: this.lobbyId } })
-      }
+
       if (msg.type === 'PLAYER_DISCONNECT') {
+        console.log('PLAYER DISCONNECT')
         this.scene.gameState.removePlayers(msg.data)
       }
       if (msg.type === 'PLAYER_POSITION') {

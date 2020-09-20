@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
@@ -18,12 +19,12 @@ users_lobbies = db.Table('userslobbies',
                          ))
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), nullable=False, unique=True)
-    hashed_password = db.Column(db.String(100), nullable=False)
+    hashed_password = db.Column(db.String(255), nullable=False)
     session_token = db.Column(db.String(500))
 
     lobbies = db.relationship('Lobby',

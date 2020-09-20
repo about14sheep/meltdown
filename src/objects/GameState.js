@@ -49,6 +49,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   removePlayers(data) {
+    if (!this.playersMap.get(data.player)) return
     this.playersMap.delete(data.player)
     this.otherPlayers.getChildren().forEach(player => {
       if (player.ID === data.player) {

@@ -1,10 +1,12 @@
 import LoginForm from '../objects/LoginForm'
-import MainScreen from '../scenes/MainScene'
-
+import MainScene from '../scenes/MainScene'
+import login from '../actions/Login'
 
 export default class Login extends Phaser.Scene {
   constructor() {
     super({ key: 'login', active: true })
+    this.login = login
+    this.success = false
   }
 
   preload() {
@@ -14,12 +16,24 @@ export default class Login extends Phaser.Scene {
 
   create() {
     if (!this.token || !this.user) {
-      const domElement = new LoginForm(this, 400, 300)
+      this.loginForm = new LoginForm(this, 400, 300)
     } else {
-      const main = new MainScreen({ key: 'main', active: true }, JSON.parse(this.user), 1)
-      this.game.scene.add('main', main)
+      this.loadGameScene()
     }
   }
 
+  update() {
+    if (this.success) {
+      this.loginForm.destroy()
+      this.success = false
+      this.loadGameScene()
+    }
+  }
+
+  loadGameScene() {
+    const user = JSON.parse(this.user)
+    const main = new MainScene({ key: 'main', active: true }, user, 1)
+    this.game.scene.add('main', main)
+  }
 
 }
