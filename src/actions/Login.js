@@ -10,7 +10,7 @@ export default async function login(username, password) {
     const { token, user } = await res.json()
     window.localStorage.setItem('meltdown/auth/token', token)
     window.localStorage.setItem('meltdown/auth/user', JSON.stringify(user))
-    return true
+    return user
   } else {
     const data = await res.json()
     return JSON.stringify(data)

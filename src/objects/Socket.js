@@ -12,17 +12,21 @@ export default class Socket extends Phaser.GameObjects.Container {
 
   configure(socket) {
     socket.on('connect', _ => {
+      const msg = {
+        'typed': 'PLAYER_CONNECTION'
+      }
       socket.emit('join', { playerId: this.scene.player.ID, username: this.scene.player.username, lobby: this.lobbyId })
     })
 
-    socket.on('disconnect', _ => {
+    socket.on('close', _ => {
       socket.emit('leave', { playerId: this.scene.player.ID, username: this.scene.player.username, lobby: this.lobbyId })
     })
 
     socket.on('message', msg => {
-      this.scene.gameState.addOtherPlayers(msg.data)
-
-      if (msg.type === 'PLAYER_DISCONNECT') {
+      if (msg.type === 'PLAYER_CONNECTION') {
+        this.scene.gameState.addOtherPlayers(msg.data)
+      }
+      if (msg.type === 'PLAYER_DISONNECT') {
         console.log('PLAYER DISCONNECT')
         this.scene.gameState.removePlayers(msg.data)
       }
@@ -36,6 +40,18 @@ export default class Socket extends Phaser.GameObjects.Container {
         this.scene.gameState.updateUsing(msg.data)
       }
     })
+
+    socket.current = {
+      socket
+    }
+
+    return function cleanup() {
+      if (socket.current !== null) {
+        socket.current.close()
+      }
+    }
+
+
   }
 
 

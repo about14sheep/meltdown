@@ -12,7 +12,6 @@ from flask_jwt_extended import (
     jwt_required, create_access_token, get_jwt_identity, JWTManager
 )
 
-
 REDIS_URL = os.environ.get('REDIS_URL')
 REDIS_CHAN = 'game'
 
@@ -25,6 +24,7 @@ db.init_app(app)
 login_manager = LoginManager(app)
 jwt = JWTManager(app)
 CORS(app)
+players = []
 
 
 @login_manager.user_loader
@@ -79,6 +79,13 @@ def auth():
     return jsonify({'user': user.to_dict(), 'token': access_token}), 200
 
 
+def build_player(msg):
+    return {
+        'lobby': msg['lobby'],
+        'id': msg['playerId']
+    }
+
+
 @socketio.on('join')
 def on_join(data):
     join_room(data['lobby'])
@@ -94,24 +101,36 @@ def on_join(data):
             }
         }
     }
-    send(msg, room=data['lobby'])
+    players.append((request.sid, build_player(data)))
+    emit("message", msg, room=data['lobby'])
 
 
 @socketio.on('leave')
 def on_leave(data):
     leave_room(data['lobby'])
+    print('player_disconnect')
     msg = {
         'type': 'PLAYER_DISONNECT',
         'data': {
             'player': data['playerId']
         }
     }
-    send(msg, room=data['lobby'])
+    emit("message", msg, room=data['lobby'])
 
 
 @socketio.on('disconnect')
 def handle_disconnect():
-    pass
+    for player in players:
+        if player[0] == request.sid:
+            data = player[-1]
+            msg = {
+                'type': 'PLAYER_DISONNECT',
+                'data': {
+                    'player': data['id']
+                }
+            }
+            emit("message", msg, room=data['lobby'])
+            return
 
 
 @socketio.on('message')

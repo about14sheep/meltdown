@@ -22,6 +22,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   updatePositions(data) {
+    if (!this.playersMap.get(data.player)) this.addOtherPlayers(data)
     this.otherPlayers.getChildren().forEach(otherPlayer => {
       if (otherPlayer.ID === data.player) {
         otherPlayer.x = data.position.x
@@ -33,6 +34,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   updateIdle(data) {
+    if (!this.playersMap.get(data.player)) this.addOtherPlayers(data)
     this.otherPlayers.getChildren().forEach(player => {
       if (player.ID === data.player) {
         player.play('idle', true)
@@ -41,6 +43,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   updateUsing(data) {
+    if (!this.playersMap.get(data.player)) this.addOtherPlayers(data)
     this.otherPlayers.getChildren().forEach(player => {
       if (player.ID === data.player) {
         player.play('using', true)
@@ -53,7 +56,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.playersMap.delete(data.player)
     this.otherPlayers.getChildren().forEach(player => {
       if (player.ID === data.player) {
-        player.destory()
+        player.destroy()
       }
     })
   }

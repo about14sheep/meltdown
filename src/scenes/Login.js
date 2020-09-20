@@ -24,9 +24,9 @@ export default class Login extends Phaser.Scene {
 
   update() {
     if (this.success) {
-      this.loginForm.destroy()
       this.success = false
       this.loadGameScene()
+      this.loginForm.destroy()
     }
   }
 
@@ -34,6 +34,11 @@ export default class Login extends Phaser.Scene {
     const user = JSON.parse(this.user)
     const main = new MainScene({ key: 'main', active: true }, user, 1)
     this.game.scene.add('main', main)
+  }
+
+  loginUser(username, password) {
+    this.user = JSON.stringify(this.login(username, password))
+    this.success = true
   }
 
 }
