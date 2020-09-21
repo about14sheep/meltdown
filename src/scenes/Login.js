@@ -24,9 +24,9 @@ export default class Login extends Phaser.Scene {
 
   update() {
     if (this.success) {
+      this.loginForm.destroy()
       this.success = false
       this.loadGameScene()
-      this.loginForm.destroy()
     }
   }
 

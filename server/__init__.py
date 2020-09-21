@@ -123,6 +123,8 @@ def handle_disconnect():
     for player in players:
         if player[0] == request.sid:
             data = player[-1]
+            players.remove(player)
+            leave_room(data['lobby'])
             msg = {
                 'type': 'PLAYER_DISONNECT',
                 'data': {

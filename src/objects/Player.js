@@ -9,7 +9,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.lobby = 1
     this.isPlayerUsing = false
     this.lastAnim = null
-    this.velocity = 200
+    this.velocity = 250
     this.keys = scene.input.keyboard.addKeys('W,S,A,D')
     this.ID = id
     this.username = username
