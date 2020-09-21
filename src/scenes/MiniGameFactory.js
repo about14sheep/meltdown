@@ -3,6 +3,7 @@ export default class MiniGameFactory extends Phaser.Scene {
     super(handle)
     this.handle = handle
     this.type = type
+    this.done = false
     this.ws = websocket
     this.barMax = barMax
     this.barStart = barStart
@@ -38,6 +39,7 @@ export default class MiniGameFactory extends Phaser.Scene {
     this.anim.setScale(1.5)
     base.setScale(1.5)
     this.typeSwitch()
+    this.bar.input.enabled = false
   }
 
   typeSwitch() {
@@ -51,8 +53,8 @@ export default class MiniGameFactory extends Phaser.Scene {
         })
         break
       case 'upslider':
-        this.bar.on('drag', (_, dragY) => {
-          if (dragY < this.barMax.y && dragY > this.barStart.y) {
+        this.bar.on('drag', (_, dragX, dragY) => {
+          if (dragY < this.barMax.y && dragY > this.barGoal.y.min) {
             this.bar.y = dragY
             this.sendGameStatus()
           }
@@ -76,6 +78,7 @@ export default class MiniGameFactory extends Phaser.Scene {
       this.anim.setVisible(true)
       this.bar.input.enabled = false
       this.count = 0
+      this.done = true
       clearInterval(this.timer)
       console.log(this.checkWin() ? 'youve won my guy' : 'youve lost you fucking fool')
     }
@@ -103,6 +106,12 @@ export default class MiniGameFactory extends Phaser.Scene {
 
   recieveTilt() {
     this.bar.setPosition(this.barStart.x, this.barStart.y)
+  }
+
+  resetGame() {
+    this.recieveTilt()
+    this.countDownStarted = false
+    this.done = false
   }
 
   checkWin() {

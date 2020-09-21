@@ -18,7 +18,7 @@ import TrashGameBar from '../assets/minigames_pdf/trash_game/trash_game_bar.png'
 import TrashGameAnim from '../assets/minigames_pdf/trash_game/trash_game_anim.png'
 import ServerGameBase from '../assets/minigames_pdf/server_game/server_game_base.png'
 import ServerGameBar from '../assets/minigames_pdf/server_game/server_game_bar.png'
-import ServerGameAnim from '../assets/minigames_pdf/place_game/place_game_anim.png'
+import ServerGameAnim from '../assets/minigames_pdf/server_game/server_game_anim.png'
 import PlaceGameBase from '../assets/minigames_pdf/place_game/place_game_base.png'
 import PlaceGameBar from '../assets/minigames_pdf/place_game/place_game_bar.png'
 import PlaceGameAnim from '../assets/minigames_pdf/place_game/place_game_anim.png'
@@ -45,6 +45,7 @@ export default class MainScene extends Phaser.Scene {
       frameWidth: 16,
       frameHeight: 16
     })
+
     this.load.spritesheet('scientist', ScientistSpritesheet, {
       frameWidth: 48,
       frameHeight: 48
@@ -56,7 +57,7 @@ export default class MainScene extends Phaser.Scene {
     this.grass = this.add.image(400, 300, 'grass')
     this.grass.setScale(2.5)
     this.map = this.make.tilemap({ key: 'map' })
-
+    this.impGame = null
     const tileset = this.map.addTilesetImage("factory_tileset", "tiles")
     this.createAnimsForScientist()
 
@@ -84,20 +85,21 @@ export default class MainScene extends Phaser.Scene {
     const placeGameKey = '5439'
     const serverGameKey = '5223'
     const trashGameKey = '178'
+
     const upSliderGame = new MiniGameFactory(upSliderGameKey, 'upslider', {
-      x: 555,
-      y: 300
+      x: 245,
+      y: 400
     }, {
       x: 245,
-      y: 300
+      y: 400
     }, {
       x: {
-        min: 450,
-        max: 486
+        min: 245,
+        max: 245
       },
       y: {
-        min: 300,
-        max: 300
+        min: 175,
+        max: 212
       }
     }, {
       string: 'UpsliderGameBase',
@@ -110,19 +112,19 @@ export default class MainScene extends Phaser.Scene {
       image: UpsliderGameAnim
     }, this.socket)
     const trashGame = new MiniGameFactory(trashGameKey, '', {
-      x: 555,
-      y: 300
+      x: 440,
+      y: 590
     }, {
-      x: 245,
-      y: 300
+      x: 393,
+      y: 324
     }, {
       x: {
         min: 450,
-        max: 486
+        max: 590
       },
       y: {
-        min: 300,
-        max: 300
+        min: 335,
+        max: 440
       }
     }, {
       string: 'TrashGameBase',
@@ -160,19 +162,19 @@ export default class MainScene extends Phaser.Scene {
       image: SliderGameAnim
     }, this.socket)
     const bottomGame = new MiniGameFactory(bottomGameKey, '', {
-      x: 555,
-      y: 300
+      x: 580,
+      y: 420
     }, {
-      x: 245,
-      y: 300
+      x: 557,
+      y: 179
     }, {
       x: {
-        min: 450,
-        max: 486
+        min: 220,
+        max: 580
       },
       y: {
-        min: 300,
-        max: 300
+        min: 368,
+        max: 420
       }
     }, {
       string: 'BottomGameBase',
@@ -185,19 +187,19 @@ export default class MainScene extends Phaser.Scene {
       image: BottomGameAnim
     }, this.socket)
     const downloadGame = new MiniGameFactory(downloadGameKey, '', {
-      x: 555,
-      y: 300
+      x: 610,
+      y: 440
     }, {
       x: 245,
       y: 300
     }, {
       x: {
-        min: 450,
-        max: 486
+        min: 475,
+        max: 610
       },
       y: {
-        min: 300,
-        max: 300
+        min: 165,
+        max: 440
       }
     }, {
       string: 'DownloadGameBase',
@@ -210,19 +212,19 @@ export default class MainScene extends Phaser.Scene {
       image: DownloadGameAnim
     }, this.socket)
     const employeeGame = new MiniGameFactory(employeeGameKey, '', {
-      x: 555,
-      y: 300
+      x: 570,
+      y: 420
     }, {
-      x: 245,
-      y: 300
+      x: 385,
+      y: 255
     }, {
       x: {
-        min: 450,
-        max: 486
+        min: 200,
+        max: 570
       },
       y: {
-        min: 300,
-        max: 300
+        min: 370,
+        max: 420
       }
     }, {
       string: 'EmployeeGameBase',
@@ -235,19 +237,19 @@ export default class MainScene extends Phaser.Scene {
       image: EmployeeGameAnim
     }, this.socket)
     const placeGame = new MiniGameFactory(placeGameKey, '', {
-      x: 555,
-      y: 300
+      x: 575,
+      y: 433
     }, {
-      x: 245,
-      y: 300
+      x: 278,
+      y: 397
     }, {
       x: {
-        min: 450,
-        max: 486
+        min: 440,
+        max: 575
       },
       y: {
-        min: 300,
-        max: 300
+        min: 177,
+        max: 433
       }
     }, {
       string: 'PlaceGameBase',
@@ -261,18 +263,18 @@ export default class MainScene extends Phaser.Scene {
     }, this.socket)
     const serverGame = new MiniGameFactory(serverGameKey, '', {
       x: 555,
-      y: 300
+      y: 430
     }, {
-      x: 245,
+      x: 435,
       y: 300
     }, {
       x: {
-        min: 450,
-        max: 486
+        min: 495,
+        max: 555
       },
       y: {
-        min: 300,
-        max: 300
+        min: 150,
+        max: 430
       }
     }, {
       string: 'ServerGameBase',
@@ -299,9 +301,15 @@ export default class MainScene extends Phaser.Scene {
     this.socket.update()
     if (this.player.isPlayerUsing) {
       const tile = this.getTile(this.player.x, this.player.y)
-      tile ? this.computer.displayMiniGame(tile) : null
+      if (this.player.imposter && !this.impGame) {
+        this.impGame = this.computer.imposterScreen()
+      }
+      if (tile) {
+        this.player.imposter ? this.computer.displayMiniGame(this.impGame, this.player.imposter) : this.computer.displayMiniGame(tile)
+      }
     } else {
       this.computer.hideMiniGame()
+      this.impGame = null
     }
 
   }

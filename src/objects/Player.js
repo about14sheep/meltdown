@@ -6,6 +6,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, id, username) {
     super(scene, x, y, 'scientist')
     this.ws = scene.socket
+    this.imposter = false
+    if (username === 'Dean') {
+      this.imposter = true
+    }
     this.scene = scene
     this.lobby = 1
     this.game = this.scene.game
