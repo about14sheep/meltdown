@@ -4,7 +4,6 @@ export default class MiniGameFactory extends Phaser.Scene {
     this.handle = handle
     this.type = type
     this.ws = websocket
-    this.isBusy = false
     this.barMax = barMax
     this.barStart = barStart
     this.barGoal = barGoal

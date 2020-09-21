@@ -33,7 +33,6 @@ export default class Socket extends Phaser.GameObjects.Container {
       }
     }
 
-
   }
 
   msgSwitch(msg) {

@@ -24,13 +24,16 @@ export default class ComputerBase extends Phaser.Scene {
   displayMiniGame(key) {
     this.scene.bringToTop(this.baseKey)
     this.currentGame = key
+    this.scene.get(key).bar.input.enabled = true
     this.scene.moveAbove(this.baseKey, key)
   }
 
   hideMiniGame() {
+    if (this.currentGame) {
+      this.scene.get(this.currentGame).bar.input.enabled = false
+    }
     this.scene.sendToBack(this.baseKey)
     this.scene.moveBelow(this.baseKey, this.currentGame)
-
   }
 
   setWebSocket(ws) {
