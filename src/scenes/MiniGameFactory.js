@@ -80,7 +80,6 @@ export default class MiniGameFactory extends Phaser.Scene {
       this.count = 0
       this.done = true
       clearInterval(this.timer)
-      console.log(this.checkWin() ? 'youve won my guy' : 'youve lost you fool')
     }
   }
 

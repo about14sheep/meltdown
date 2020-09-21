@@ -307,7 +307,7 @@ export default class MainScene extends Phaser.Scene {
       this.player.reset()
     } else if (this.computer.calculateGame() === 'scientists') {
       this.gameState.playersScore++
-      console.log(`scientists won; ${12 / this.gameState.impostersScore} minutes to midnight`)
+      console.log(`scientists won; ${12 / (this.gameState.impostersScore === 0 ? 1 : this.gameState.impostersScore)} minutes to midnight`)
       this.computer.reset()
       this.gameState.reset()
       this.player.reset()
