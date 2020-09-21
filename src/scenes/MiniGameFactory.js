@@ -6,7 +6,6 @@ export default class MiniGameFactory extends Phaser.Scene {
     this.barStart = barStart
     this.barGoal = barGoal
     this.countDownStarted = false
-    this.gameSuccess = false
     this.count = 0
     this.baseImage = {
       string: base.string,
@@ -65,12 +64,15 @@ export default class MiniGameFactory extends Phaser.Scene {
   update() {
     if (this.checkWin() && !this.countDownStarted) {
       this.countDownStarted = true
-      setInterval(this.animateGoal.bind(this), 1000)
+      this.anim.setVisible(true)
+      this.timer = setInterval(this.animateGoal.bind(this), 1000)
     }
     if (this.count === 15) {
-      this.gameSuccess = this.checkWin()
+      this.anim.setVisible(true)
+      this.bar.input.enabled = false
+      this.count = 0
+      clearInterval(this.timer)
       console.log(this.checkWin() ? 'youve won my guy' : 'youve lost you fucking fool')
-      clearInterval(this.animateGoal)
     }
 
   }
