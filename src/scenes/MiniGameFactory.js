@@ -5,6 +5,9 @@ export default class MiniGameFactory extends Phaser.Scene {
     this.barMax = barMax
     this.barStart = barStart
     this.barGoal = barGoal
+    this.countDownStarted = false
+    this.gameSuccess = false
+    this.count = 0
     this.baseImage = {
       string: base.string,
       image: base.image
@@ -28,7 +31,7 @@ export default class MiniGameFactory extends Phaser.Scene {
   create() {
     const base = this.add.sprite(400, 300, this.baseImage.string)
     this.bar = this.add.sprite(this.barStart.x, this.barStart.y, this.barImage.string).setInteractive({ draggable: true })
-    this.anim = this.add.sprite(this.barGoal.x.min, this.barGoal.y.min, this.animImage.string)
+    this.anim = this.add.sprite(400, 300, this.animImage.string)
     this.anim.setVisible(false)
     this.bar.setScale(1.5)
     this.anim.setScale(1.5)
@@ -57,6 +60,28 @@ export default class MiniGameFactory extends Phaser.Scene {
           this.bar.setPosition(dragX, dragY)
         })
     }
+  }
+
+  update() {
+    if (this.checkWin() && !this.countDownStarted) {
+      this.countDownStarted = true
+      setInterval(this.animateGoal.bind(this), 1000)
+    }
+    if (this.count === 15) {
+      this.gameSuccess = this.checkWin()
+      console.log(this.checkWin() ? 'youve won my guy' : 'youve lost you fucking fool')
+      clearInterval(this.animateGoal)
+    }
+
+  }
+
+  getSuccess() {
+    return this.gameSuccess
+  }
+
+  animateGoal() {
+    this.count++
+    this.anim.setVisible(!this.anim.visible)
   }
 
   sendGameStatus(ws) {
