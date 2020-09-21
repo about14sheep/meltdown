@@ -299,6 +299,19 @@ export default class MainScene extends Phaser.Scene {
   update() {
     this.player.update()
     this.socket.update()
+    if (this.computer.calculateGame() === 'imposters') {
+      this.gameState.impostersScore++
+      console.log(`imposters won; ${12 / this.gameState.impostersScore} minutes to midnight`)
+      this.computer.reset()
+      this.gameState.reset()
+      this.player.reset()
+    } else if (this.computer.calculateGame() === 'scientists') {
+      this.gameState.playersScore++
+      console.log(`scientists won; ${12 / this.gameState.impostersScore} minutes to midnight`)
+      this.computer.reset()
+      this.gameState.reset()
+      this.player.reset()
+    }
     if (this.player.isPlayerUsing) {
       const tile = this.getTile(this.player.x, this.player.y)
       if (this.player.imposter && !this.impGame) {
@@ -311,6 +324,7 @@ export default class MainScene extends Phaser.Scene {
       this.computer.hideMiniGame()
       this.impGame = null
     }
+
 
   }
 

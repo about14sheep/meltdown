@@ -7,6 +7,8 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.player = scene.player
     this.playersMap = new Map()
     this.otherPlayers = scene.physics.add.group()
+    this.playersScore = 0
+    this.impostersScore = 0
   }
 
   addOtherPlayers(data) {
@@ -58,6 +60,20 @@ export default class GameState extends Phaser.GameObjects.Container {
       if (player.ID === data.player) {
         player.destroy()
       }
+    })
+  }
+
+  reset() {
+    if (this.imposterScore === 3) {
+      this.impostersScore = 0
+      console.log('0 minutes to midnight. GAME OVER')
+    }
+    if (this.playersScore === 3) {
+      this.playersScore = 0
+      console.log('GAME OVER == players saved the world')
+    }
+    this.otherPlayers.getChildren().forEach(player => {
+      player.reset()
     })
   }
 }

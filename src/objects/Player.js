@@ -59,6 +59,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  reset() {
+    this.setPosition(400, 300)
+    this.imposter = false
+  }
+
   animSwitch(key) {
     switch (key) {
       case 'using':

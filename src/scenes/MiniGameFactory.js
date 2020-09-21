@@ -80,7 +80,7 @@ export default class MiniGameFactory extends Phaser.Scene {
       this.count = 0
       this.done = true
       clearInterval(this.timer)
-      console.log(this.checkWin() ? 'youve won my guy' : 'youve lost you fucking fool')
+      console.log(this.checkWin() ? 'youve won my guy' : 'youve lost you fool')
     }
   }
 
@@ -109,9 +109,11 @@ export default class MiniGameFactory extends Phaser.Scene {
   }
 
   resetGame() {
+    clearInterval(this.timer)
     this.recieveTilt()
     this.countDownStarted = false
     this.done = false
+    this.anim.setVisible(!this.anim.visible)
   }
 
   checkWin() {
