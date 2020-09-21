@@ -108,7 +108,7 @@ export default class MainScene extends Phaser.Scene {
     }, {
       string: 'UpsliderGameAnim',
       image: UpsliderGameAnim
-    })
+    }, this.socket)
     const trashGame = new MiniGameFactory(trashGameKey, '', {
       x: 555,
       y: 300
@@ -133,7 +133,7 @@ export default class MainScene extends Phaser.Scene {
     }, {
       string: 'TrashGameAnim',
       image: TrashGameAnim
-    })
+    }, this.socket)
     const sliderGame = new MiniGameFactory(sliderGameKey, 'slider', {
       x: 555,
       y: 300
@@ -158,7 +158,7 @@ export default class MainScene extends Phaser.Scene {
     }, {
       string: 'SliderGameAnim',
       image: SliderGameAnim
-    })
+    }, this.socket)
     const bottomGame = new MiniGameFactory(bottomGameKey, '', {
       x: 555,
       y: 300
@@ -183,7 +183,7 @@ export default class MainScene extends Phaser.Scene {
     }, {
       string: 'BottomGameAnim',
       image: BottomGameAnim
-    })
+    }, this.socket)
     const downloadGame = new MiniGameFactory(downloadGameKey, '', {
       x: 555,
       y: 300
@@ -208,7 +208,7 @@ export default class MainScene extends Phaser.Scene {
     }, {
       string: 'DownloadGameAnim',
       image: DownloadGameAnim
-    })
+    }, this.socket)
     const employeeGame = new MiniGameFactory(employeeGameKey, '', {
       x: 555,
       y: 300
@@ -233,7 +233,7 @@ export default class MainScene extends Phaser.Scene {
     }, {
       string: 'EmployeeGameAnim',
       image: EmployeeGameAnim
-    })
+    }, this.socket)
     const placeGame = new MiniGameFactory(placeGameKey, '', {
       x: 555,
       y: 300
@@ -258,7 +258,7 @@ export default class MainScene extends Phaser.Scene {
     }, {
       string: 'PlaceGameAnim',
       image: PlaceGameAnim
-    })
+    }, this.socket)
     const serverGame = new MiniGameFactory(serverGameKey, '', {
       x: 555,
       y: 300
@@ -283,7 +283,7 @@ export default class MainScene extends Phaser.Scene {
     }, {
       string: 'ServerGameAnim',
       image: ServerGameAnim
-    })
+    }, this.socket)
     this.computer.loadMiniGame(sliderGameKey, sliderGame)
     this.computer.loadMiniGame(upSliderGameKey, upSliderGame)
     this.computer.loadMiniGame(trashGameKey, trashGame)

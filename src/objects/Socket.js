@@ -54,7 +54,7 @@ export default class Socket extends Phaser.GameObjects.Container {
         this.scene.gameState.updateIdle(msg.data)
         break
       default:
-        return
+        this.scene.scene.get(msg.type).syncGame(msg.data)
     }
   }
 
