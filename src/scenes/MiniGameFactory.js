@@ -105,6 +105,7 @@ export default class MiniGameFactory extends Phaser.Scene {
 
   recieveTilt() {
     this.bar.setPosition(this.barStart.x, this.barStart.y)
+    this.sendGameStatus()
   }
 
   resetGame() {
