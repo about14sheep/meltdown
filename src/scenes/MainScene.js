@@ -1,5 +1,5 @@
 import Player from '../objects/Player'
-import SliderGame from './SliderGame'
+import MiniGameFactory from './MiniGameFactory'
 import Socket from '../objects/Socket'
 import GameState from '../objects/GameState'
 
@@ -7,6 +7,9 @@ import ScientistSpritesheet from '../assets/scientist_spritesheet.png'
 import Grass from '../assets/grass.png'
 import FactoryTiles from '../assets/factory_tileset.png'
 import layout from '../assets/meltdown_start_room.json'
+import SliderGameBase from '../assets/minigames_pdf/slider_game/slidergame_base.png'
+import SliderGameBar from '../assets/minigames_pdf/slider_game/slidergame_bar.png'
+import SliderGameAnim from '../assets/minigames_pdf/slider_game/slidergame_anim.png'
 
 export default class MainScene extends Phaser.Scene {
   constructor(handle, data, lobbyID) {
@@ -52,7 +55,31 @@ export default class MainScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player)
     this.computer = this.scene.get('computer')
     const sliderGameKey = 'sliderGame'
-    const sliderGame = new SliderGame(sliderGameKey)
+    const sliderGame = new MiniGameFactory(sliderGameKey, 'slider', {
+      x: 555,
+      y: 300
+    }, {
+      x: 245,
+      y: 300
+    }, {
+      x: {
+        min: 400,
+        max: 460
+      },
+      y: {
+        min: 300,
+        max: 300
+      }
+    }, {
+      string: 'SliderGameBase',
+      image: SliderGameBase
+    }, {
+      string: 'SliderGameBar',
+      image: SliderGameBar,
+    }, {
+      string: 'SliderGameAnim',
+      image: SliderGameAnim
+    })
     this.computer.loadMiniGame(sliderGameKey, sliderGame)
   }
 

@@ -1,5 +1,5 @@
 import LoginForm from '../objects/LoginForm'
-import MainScene from '../scenes/MainScene'
+import MainScene from './MainScene'
 import login from '../actions/Login'
 
 export default class Login extends Phaser.Scene {
