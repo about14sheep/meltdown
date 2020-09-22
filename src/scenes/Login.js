@@ -1,12 +1,13 @@
 import LoginForm from '../objects/LoginForm'
 import MainScene from './MainScene'
-import login from '../actions/Login'
+import login from '../actions/LoginAPI'
 
 export default class Login extends Phaser.Scene {
   constructor() {
     super({ key: 'login', active: true })
     this.login = login
     this.success = false
+    this.lobbyId = 1
   }
 
   preload() {
@@ -23,7 +24,7 @@ export default class Login extends Phaser.Scene {
   }
 
   update() {
-    if (this.success) {
+    if (this.success && this.lobbyId) {
       this.loginForm.destroy()
       this.success = false
       this.loadGameScene()
@@ -32,7 +33,7 @@ export default class Login extends Phaser.Scene {
 
   loadGameScene() {
     const user = JSON.parse(this.user)
-    const main = new MainScene({ key: 'main', active: true }, user, 1)
+    const main = new MainScene({ key: 'main', active: true }, user, this.lobbyId)
     this.game.scene.add('main', main)
   }
 

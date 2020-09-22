@@ -79,6 +79,26 @@ def auth():
     return jsonify({'user': user.to_dict(), 'token': access_token}), 200
 
 
+@app.route('/api/lobbies')
+def lobbies():
+    lobbies = Lobby.query.all()
+    return {'lobbies': [lobby.to_dict() for lobby in lobbies]}
+
+
+@app.route('/api/lobby/<id>', methods=['GET', 'PUT'])
+def lobby(id):
+    lobby = Lobby.query.get(id)
+    if request.method == 'PUT':
+        if len(lobby.users) >= lobby.player_max:
+            return False
+        userId = request.json.get('id')
+        user = User.query.get(userId)
+        user.lobbies.append(lobby)
+        db.session.commit()
+        return lobby.to_dict()
+    return lobby.to_dict()
+
+
 def build_player(msg):
     return {
         'lobby': msg['lobby'],
