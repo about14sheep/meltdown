@@ -21,21 +21,43 @@ export default class LobbyList extends Phaser.GameObjects.DOMElement {
     super(scene, x, y)
     this.scene = scene
     this.user = user
-    this.loadLobbies = this.loadLobbies()
-    this.createFromHTML('')
-    this.configureConnectToLobbyEvent()
+    this.createFromHTML('<div id="lobbies_container" style="background-color: lime; width: 320px; height: 400px; font: 48px Arial"></div>')
+    this.loadLobbies()
     scene.add.existing(this)
   }
 
-  loadLobbies() {
-    return await getLobbies()
+  renderLobbies(lobbyStrings) {
+    let result = ''
+    lobbyStrings.forEach((lobbyString, i) => {
+      result += lobbyString
+    })
+    this.createFromHTML(result)
+    this.configureLobbyEvents(lobbyStrings.length)
   }
 
-  configureConnectToLobbyEvent() {
-    this.getChildByID('submit').addEventListener('click', this.submitHandler.bind(this))
+  configureLobbyEvents(n) {
+    let count = 0
+    while (count < n) {
+      this.getChildByID(`lobby_${count}`).addEventListener('click', this.clickHandler.bind(this))
+      count++
+    }
   }
 
-  submitHandler(e) {
+  clickHandler(e) {
+    this.scene.lobbyId = e.currentTarget.childNodes[e.currentTarget.childNodes.length - 1].value
+  }
+
+  createHtmlStrings(lobbies) {
+    const lobbyHTMLStrings = lobbies.map((lobby, i) => `<div id="lobby_${i}"><p>Lobby: ${lobby.name}</p><p>Players: ${lobby.players.length}/${lobby.player_max} max</p><input type="hidden" value="${lobby.id}"></div>`)
+    this.renderLobbies(lobbyHTMLStrings)
+  }
+
+  async loadLobbies() {
+    const res = await getLobbies()
+    this.createHtmlStrings(res)
+  }
+
+  async submitHandler(e) {
     const check = await checkLobby(e.target.value)
     if (!check) {
       const lobby = await joinLobby(e.target.value, user)

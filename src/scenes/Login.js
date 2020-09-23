@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import LoginForm from '../objects/LoginForm'
+import LobbyList from '../objects/LobbyList'
 import MainScene from './MainScene'
 import login from '../actions/LoginAPI'
 
@@ -23,7 +24,7 @@ export default class Login extends Phaser.Scene {
     super({ key: 'login', active: true })
     this.login = login
     this.success = false
-    this.lobbyId = 1
+    this.lobbyId = null
   }
 
   preload() {
@@ -35,14 +36,21 @@ export default class Login extends Phaser.Scene {
     if (!this.token || !this.user) {
       this.loginForm = new LoginForm(this, 400, 300)
     } else {
-      this.loadGameScene()
+      this.success = true
     }
   }
 
   update() {
-    if (this.success && this.lobbyId) {
-      this.loginForm.destroy()
+    if (this.success) {
+      if (this.loginForm) {
+        this.loginForm.destroy()
+      }
+    }
+    if (this.success && !this.lobbyId && !this.lobbyList) {
+      this.lobbyList = new LobbyList(this, 400, 300)
+    } else if (this.success && this.lobbyId) {
       this.success = false
+      this.lobbyList.destroy()
       this.loadGameScene()
     }
   }

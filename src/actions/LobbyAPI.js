@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-async function getLobbies() {
+export const getLobbies = async _ => {
   const res = await fetch('http://localhost:3000/api/lobbies')
   if (res.ok) {
     const { lobbies } = await res.json()
@@ -25,7 +25,7 @@ async function getLobbies() {
   }
 }
 
-async function checkLobby(id) {
+export const checkLobby = async id => {
   const res = await fetch(`http://localhost:3000/api/lobby/${id}`)
   if (res.ok) {
     const { player_max, player_count } = await res.json()
@@ -37,7 +37,7 @@ async function checkLobby(id) {
   }
 }
 
-async function joinLobby(lobbyId, user) {
+export const joinLobby = async (lobbyId, user) => {
   const res = await fetch(`http://localhost:3000/api/lobby/${lobbyId}`, {
     methos: 'PUT',
     headers: {
@@ -53,10 +53,4 @@ async function joinLobby(lobbyId, user) {
     console.error(`An error occured joining lobby ${lobbyId}: `, error)
     return false
   }
-}
-
-module.exports = {
-  getLobbies,
-  checkLobby,
-  joinLobby,
 }

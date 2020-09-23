@@ -40,7 +40,7 @@ socketio = SocketIO(app, cors_allowed_origins='http://localhost:8080')
 db.init_app(app)
 login_manager = LoginManager(app)
 jwt = JWTManager(app)
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
 players = []
 
 

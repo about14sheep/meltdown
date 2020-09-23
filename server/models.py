@@ -68,7 +68,6 @@ class User(db.Model, UserMixin):
             'username': self.username,
             'hashed_password': self.hashed_password,
             'session_token': self.session_token,
-            'lobbies': [lobby.to_dict() for lobby in self.lobbies]
         }
 
 
@@ -86,5 +85,5 @@ class Lobby(db.Model):
             'id': self.id,
             'name': self.name,
             'player_max': self.player_max,
-            'player_count': self.player_count
+            'players': [user.to_dict() for user in self.users]
         }
