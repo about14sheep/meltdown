@@ -317,16 +317,12 @@ export default class MainScene extends Phaser.Scene {
     this.socket.update()
     if (this.computer.calculateGame() === 'imposters') {
       this.gameState.impostersScore++
-      console.log(`imposters won; ${12 / this.gameState.impostersScore} minutes to midnight`)
-      this.computer.reset()
-      this.gameState.reset()
-      this.player.reset()
+      console.log(`imposters won; ${this.gameState.minutesToMidnight()} minutes to midnight`)
+      this.reset()
     } else if (this.computer.calculateGame() === 'scientists') {
       this.gameState.playersScore++
-      console.log(`scientists won; ${12 / (this.gameState.impostersScore === 0 ? 1 : this.gameState.impostersScore)} minutes to midnight`)
-      this.computer.reset()
-      this.gameState.reset()
-      this.player.reset()
+      console.log(`scientists won; ${this.gameState.minutesToMidnight()} minutes to midnight`)
+      this.reset()
     }
     if (this.player.isPlayerUsing) {
       const tile = this.getTile(this.player.x, this.player.y)
@@ -342,6 +338,12 @@ export default class MainScene extends Phaser.Scene {
     }
 
 
+  }
+
+  reset() {
+    this.computer.reset()
+    this.gameState.reset()
+    this.player.reset()
   }
 
   checkForTiles(tile, value) {

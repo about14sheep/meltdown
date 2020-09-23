@@ -24,6 +24,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, 'scientist')
     this.ws = scene.socket
     this.imposter = false
+    this.gameOver = false
     if (username === 'Dean') {
       this.imposter = true
     }
@@ -78,7 +79,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   reset() {
     this.setPosition(400, 300)
-    this.imposter = false
+    if (this.gameOver === true) {
+      this.imposter = false
+    }
   }
 
   animSwitch(key) {

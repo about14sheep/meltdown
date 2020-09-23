@@ -34,7 +34,4 @@ export default class LoginForm extends Phaser.GameObjects.DOMElement {
     this.scene.loginUser(this.usernameInput.value, this.passwordInput.value)
   }
 
-
-
-
 }
