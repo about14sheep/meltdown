@@ -47,7 +47,7 @@ export default class Login extends Phaser.Scene {
       }
     }
     if (this.success && !this.lobbyId && !this.lobbyList) {
-      this.lobbyList = new LobbyList(this, 400, 300)
+      this.lobbyList = new LobbyList(this, 400, 300, this.user)
     } else if (this.success && this.lobbyId) {
       this.success = false
       this.lobbyList.destroy()

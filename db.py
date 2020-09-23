@@ -33,15 +33,18 @@ with app.app_context():
     dean = User(username='Dean',
                 password='password')
 
-    lobby1 = Lobby(name='Lobby One', player_max=10)
-    lobby2 = Lobby(name='lobby two', player_max=8)
-
-    ian.lobbies.append(lobby1)
-    javier.lobbies.append(lobby1)
-    dean.lobbies.append(lobby1)
-    javier.lobbies.append(lobby2)
+    lobby1 = Lobby(name='West Wing B Reactor', player_max=8)
+    lobby2 = Lobby(name='Fifth Floor Laboratories', player_max=8)
+    lobby3 = Lobby(name='Cafeteria Waiting Room', player_max=8)
+    lobby4 = Lobby(name='Atomic City Freeway Truck Stop', player_max=8)
+    lobby5 = Lobby(name='Factory Floor', player_max=8)
 
     db.session.add(ian)
     db.session.add(javier)
     db.session.add(dean)
+    db.session.add(lobby1)
+    db.session.add(lobby2)
+    db.session.add(lobby3)
+    db.session.add(lobby4)
+    db.session.add(lobby5)
     db.session.commit()

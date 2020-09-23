@@ -21,6 +21,7 @@ import os
 import logging
 import eventlet
 import redis
+import json
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 from flask_cors import CORS
@@ -35,6 +36,7 @@ REDIS_CHAN = 'game'
 app = Flask(__name__)
 app.config.from_object(Config)
 logging.basicConfig(level=logging.DEBUG)
+logging.getLogger('flask_cors').level = logging.DEBUG
 redis = redis.from_url(REDIS_URL)
 socketio = SocketIO(app, cors_allowed_origins='http://localhost:8080')
 db.init_app(app)
@@ -105,15 +107,16 @@ def lobbies():
 @app.route('/api/lobby/<id>', methods=['GET', 'PUT'])
 def lobby(id):
     lobby = Lobby.query.get(id)
+    lob = lobby.to_dict()
     if request.method == 'PUT':
-        if len(lobby.users) >= lobby.player_max:
+        if len(lob['players']) >= lob['player_max']:
             return False
-        userId = request.json.get('id')
+        userId = json.loads(request.json)['id']
         user = User.query.get(userId)
-        user.lobbies.append(lobby)
+        lobby.users.append(user)
+        print('USERS IN GIVEN LOBBY', lobby.users)
         db.session.commit()
-        return lobby.to_dict()
-    return lobby.to_dict()
+    return lob
 
 
 def build_player(msg):

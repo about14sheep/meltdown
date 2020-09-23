@@ -75,7 +75,7 @@ class Lobby(db.Model):
     __tablename__ = 'lobbies'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(20), nullable=False)
+    name = db.Column(db.String(40), nullable=False)
     password = db.Column(db.String(20))
     player_max = db.Column(db.Integer)
     player_count = db.Column(db.Integer)

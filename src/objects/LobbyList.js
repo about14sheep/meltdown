@@ -44,11 +44,21 @@ export default class LobbyList extends Phaser.GameObjects.DOMElement {
   }
 
   clickHandler(e) {
-    this.scene.lobbyId = e.currentTarget.childNodes[e.currentTarget.childNodes.length - 1].value
+    const id = e.currentTarget.childNodes[e.currentTarget.childNodes.length - 1].value
+    this.joinServer(id)
+  }
+
+  joinServer(id) {
+    if (checkLobby(id)) {
+      joinLobby(id, this.user)
+      this.scene.lobbyId = id
+    } else {
+      console.log('lobby is full or an error has occured')
+    }
   }
 
   createHtmlStrings(lobbies) {
-    const lobbyHTMLStrings = lobbies.map((lobby, i) => `<div id="lobby_${i}"><p>Lobby: ${lobby.name}</p><p>Players: ${lobby.players.length}/${lobby.player_max} max</p><input type="hidden" value="${lobby.id}"></div>`)
+    const lobbyHTMLStrings = lobbies.map((lobby, i) => `<div id="lobby_${i}"><p>Lobby: ${lobby.name}</p><p>Players: ${lobby.players.length}/${lobby.player_max}</p><input type="hidden" value="${lobby.id}"></div>`)
     this.renderLobbies(lobbyHTMLStrings)
   }
 

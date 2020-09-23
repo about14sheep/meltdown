@@ -39,7 +39,7 @@ export const checkLobby = async id => {
 
 export const joinLobby = async (lobbyId, user) => {
   const res = await fetch(`http://localhost:3000/api/lobby/${lobbyId}`, {
-    methos: 'PUT',
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json'
     },
