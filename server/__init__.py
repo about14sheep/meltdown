@@ -163,7 +163,11 @@ def handle_disconnect():
     for player in players:
         if player[0] == request.sid:
             data = player[-1]
+            lobby = Lobby.query.get(data['lobby'])
+            playerToRemove = User.query.get(data['id'])
+            lobby.users.remove(playerToRemove)
             players.remove(player)
+            db.session.commit()
             leave_room(data['lobby'])
             msg = {
                 'type': 'PLAYER_DISONNECT',
