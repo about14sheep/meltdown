@@ -80,7 +80,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   minutesToMidnight() {
-    return this.impostersScore === 1 ? 6 : this.impostersScore === 2 ? 3 : 0
+    return this.impostersScore === 0 ? 12 : this.impostersScore === 1 ? 6 : this.impostersScore === 2 ? 3 : 0
   }
 
   reset() {
