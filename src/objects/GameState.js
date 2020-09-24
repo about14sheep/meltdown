@@ -80,11 +80,11 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   minutesToMidnight() {
-    return this.impostersScore === 0 ? 12 : this.impostersScore === 1 ? 6 : this.impostersScore === 2 ? 3 : 0
+    return this.impostersScore < 3 ? 12 / (this.impostersScore + 1) : 0
   }
 
   reset() {
-    if (this.imposterScore === 3 || this.playersScore === 3) {
+    if (this.impostersScore === 3 || this.playersScore === 3) {
       this.impostersScore = 0
       this.playersScore = 0
       this.impostersScore > this.playersScore ? console.log('0 minutes to midnight. BOOM EVENT -- GAME OVER') : console.log('players saved the world. SALUTE EVENT -- GAME OVER')
