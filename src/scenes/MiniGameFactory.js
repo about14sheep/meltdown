@@ -15,12 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 export default class MiniGameFactory extends Phaser.Scene {
-  constructor(handle, type, barMax, barStart, barGoal, base, bar, anim, websocket) {
+  constructor(handle, type, barMax, barStart, barGoal, base, bar, anim) {
     super(handle)
     this.handle = handle
     this.type = type
     this.done = false
-    this.ws = websocket
     this.barMax = barMax
     this.barStart = barStart
     this.barGoal = barGoal
@@ -64,7 +63,6 @@ export default class MiniGameFactory extends Phaser.Scene {
         this.bar.on('drag', (_, dragX) => {
           if (dragX < this.barMax.x && dragX > this.barStart.x) {
             this.bar.x = dragX
-            this.sendGameStatus()
           }
         })
         break
@@ -72,14 +70,12 @@ export default class MiniGameFactory extends Phaser.Scene {
         this.bar.on('drag', (_, dragX, dragY) => {
           if (dragY < this.barMax.y && dragY > this.barGoal.y.min) {
             this.bar.y = dragY
-            this.sendGameStatus()
           }
         })
         break
       default:
         this.bar.on('drag', (_, dragX, dragY) => {
           this.bar.setPosition(dragX, dragY)
-          this.sendGameStatus()
         })
     }
   }
@@ -104,24 +100,12 @@ export default class MiniGameFactory extends Phaser.Scene {
     this.anim.setVisible(!this.anim.visible)
   }
 
-  sendGameStatus() {
-    const socketMsg = {
-      type: this.handle,
-      data: {
-        x: this.bar.x,
-        y: this.bar.y
-      }
-    }
-    return this.ws.sendMessage(socketMsg)
-  }
-
   syncGame(data) {
     this.bar.setPosition(data.x, data.y)
   }
 
   recieveTilt() {
     this.bar.setPosition(this.barStart.x, this.barStart.y)
-    this.sendGameStatus()
   }
 
   resetGame() {

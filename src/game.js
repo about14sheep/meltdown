@@ -16,7 +16,6 @@
 
 import 'phaser'
 
-import MainScene from './scenes/MainScene'
 import ComputerBase from './scenes/ComputerBase'
 import Login from './scenes/Login'
 

@@ -20,6 +20,7 @@ export default class ComputerBase extends Phaser.Scene {
   constructor() {
     super({ key: 'computer', active: true })
     this.currentGame = ''
+    this.miniGameBarLastPosition = {}
     this.minigames = []
     this.ws = null
     this.count = 0
@@ -49,6 +50,7 @@ export default class ComputerBase extends Phaser.Scene {
       if (!this.hackButton.anims.isPlaying && !this.scene.get(this.currentGame).done) {
         this.hackButton.play('hacking')
         this.scene.get(this.currentGame).recieveTilt()
+        this.tetherMiniGame(this.scene.get(this.currentGame))
       }
     })
     this.hackButton.setScale(2)
@@ -65,16 +67,35 @@ export default class ComputerBase extends Phaser.Scene {
     this.hackButton.input.enabled = false
     if (!this.scene.get(key).count < 15 && !imposter) {
       this.scene.get(key).bar.input.enabled = true
+      this.tetherMiniGame(this.scene.get(key))
     } else if (imposter) {
-      this.scene.bringToTop(this.hackButton)
       this.scene.get(key).bar.input.enabled = false
       this.hackButton.input.enabled = true
       this.hackButton.setVisible(true)
+      this.scene.bringToTop(this.hackButton)
     }
-
     this.scene.bringToTop(this.baseKey)
     this.currentGame = key
     this.scene.moveAbove(this.baseKey, key)
+  }
+
+  tetherMiniGame(game) {
+    const barPos = {
+      x: game.bar.x,
+      y: game.bar.y
+    }
+    if (this.miniGameBarLastPosition != barPos) {
+      const msg = this.buildMessage(barPos, game.handle)
+      this.ws.sendMessage(msg)
+      this.miniGameBarLastPosition = barPos
+    }
+  }
+
+  buildMessage(position, handle) {
+    return {
+      type: handle,
+      data: position
+    }
   }
 
   calculateGame() {
@@ -104,6 +125,7 @@ export default class ComputerBase extends Phaser.Scene {
     }
     this.scene.sendToBack(this.baseKey)
     this.scene.moveBelow(this.baseKey, this.currentGame)
+    this.miniGameBarLastPosition = {}
   }
 
   imposterScreen() {
@@ -116,8 +138,11 @@ export default class ComputerBase extends Phaser.Scene {
     if (this.count === games.length) {
       this.count = 0
     }
-
     return result
+  }
+
+  setSocket(socket) {
+    this.ws = socket
   }
 
 }
