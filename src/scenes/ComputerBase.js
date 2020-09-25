@@ -42,10 +42,10 @@ export default class ComputerBase extends Phaser.Scene {
       frameRate: 1,
       repeat: 5
     })
-
-    this.hackButton = this.add.sprite(500, 425, 'hack').setInteractive()
     const computerBase = this.add.sprite(400, 300, 'computerbase')
+    this.hackButton = this.add.sprite(400, 400, 'hack').setInteractive()
     computerBase.setScale(1.5)
+    this.hackButton.setVisible(false)
     this.hackButton.input.enabled = false
     this.hackButton.on('pointerdown', _ => {
       if (!this.hackButton.anims.isPlaying && !this.scene.get(this.currentGame).done) {
@@ -66,18 +66,19 @@ export default class ComputerBase extends Phaser.Scene {
   displayMiniGame(key, imposter) {
     this.hackButton.setVisible(false)
     this.hackButton.input.enabled = false
+    this.scene.bringToTop(this.baseKey)
+    this.currentGame = key
+    this.scene.moveAbove(this.baseKey, key)
     if (!this.scene.get(key).count < 15 && !imposter) {
       this.scene.get(key).bar.input.enabled = true
       this.tetherMiniGame(this.scene.get(key))
     } else if (imposter) {
-      this.scene.get(key).bar.input.enabled = false
-      this.hackButton.input.enabled = true
       this.hackButton.setVisible(true)
-      this.scene.bringToTop(this.hackButton)
+      this.scene.bringToTop('hack')
+      this.hackButton.input.enabled = true
+      this.scene.get(key).bar.input.enabled = false
     }
-    this.scene.bringToTop(this.baseKey)
-    this.currentGame = key
-    this.scene.moveAbove(this.baseKey, key)
+
   }
 
   tetherMiniGame(game) {

@@ -40,7 +40,6 @@ import BottomGameBase from '../assets/minigames_pdf/bottom_game/bottom_game_base
 import BottomGameBar from '../assets/minigames_pdf/bottom_game/bottom_game_bar.png'
 import BottomGameAnim from '../assets/minigames_pdf/bottom_game/bottom_game_anim.png'
 
-
 import MiniGameFactory from '../scenes/MiniGameFactory'
 
 

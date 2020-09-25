@@ -29,7 +29,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       this.imposter = true
     }
     this.scene = scene
-    this.lobby = 1
+    this.lobby = scene.lobbyID
     this.game = this.scene.game
     this.isPlayerUsing = false
     this.lastAnim = null
