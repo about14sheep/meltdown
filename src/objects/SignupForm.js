@@ -41,6 +41,6 @@ export default class SignupForm extends Phaser.GameObjects.DOMElement {
   }
 
   signupHandler() {
-    this.scene.createUser(this.usernameInput.nodeValue, this.passwordInput.value)
+    this.scene.createUser(this.usernameInput.value, this.passwordInput.value)
   }
 }

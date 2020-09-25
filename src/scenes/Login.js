@@ -20,11 +20,11 @@ import MainScene from './MainScene'
 import SignupForm from '../objects/SignupForm'
 
 import login from '../actions/LoginAPI'
+import signup from '../actions/SignupAPI'
 
 export default class Login extends Phaser.Scene {
   constructor() {
     super({ key: 'login', active: true })
-    this.login = login
     this.success = false
     this.lobbyId = null
   }
@@ -46,6 +46,8 @@ export default class Login extends Phaser.Scene {
     if (this.success) {
       if (this.loginForm) {
         this.loginForm.destroy()
+      }
+      if (this.signupForm) {
         this.signupForm.destroy()
       }
     }
@@ -75,12 +77,14 @@ export default class Login extends Phaser.Scene {
   }
 
   loginUser(username, password) {
-    this.user = JSON.stringify(this.login(username, password))
+    this.user = JSON.stringify(login(username, password))
     this.success = true
   }
 
   createUser(username, password) {
-    console.log('yeah your good totally in there brother ' + `${username}.`)
+    console.log(username, password)
+    this.user = JSON.stringify(signup(username, password))
+    this.success = true
   }
 
 }

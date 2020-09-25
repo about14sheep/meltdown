@@ -21,7 +21,7 @@ export default class LobbyList extends Phaser.GameObjects.DOMElement {
     super(scene, x, y)
     this.scene = scene
     this.user = user
-    this.createFromHTML('<div id="lobbies_container" style="background-color: lime; width: 320px; height: 400px; font: 48px Arial"></div>')
+    this.createFromHTML('<div id="lobbies_container" style="width: 320px; height: 400px;"></div>')
     this.loadLobbies()
     scene.add.existing(this)
   }
@@ -58,7 +58,7 @@ export default class LobbyList extends Phaser.GameObjects.DOMElement {
   }
 
   createHtmlStrings(lobbies) {
-    const lobbyHTMLStrings = lobbies.map((lobby, i) => `<div style="background-color: lime;" id="lobby_${i}"><p>Lobby: ${lobby.name}</p><p>Players: ${lobby.players.length}/${lobby.player_max}</p><input type="hidden" value="${lobby.id}"></div>`)
+    const lobbyHTMLStrings = lobbies.map((lobby, i) => `<div style="background-color: #4E4E4E;" id="lobby_${i}"><p>Lobby: ${lobby.name}</p><p>Players: ${lobby.players.length}/${lobby.player_max}</p><input type="hidden" value="${lobby.id}"></div>`)
     this.renderLobbies(lobbyHTMLStrings)
   }
 
