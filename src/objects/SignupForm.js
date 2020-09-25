@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-export default class LoginForm extends Phaser.GameObjects.DOMElement {
+export default class SignupForm extends Phaser.GameObjects.DOMElement {
   constructor(scene, x, y) {
     super(scene, x, y)
     this.scene = scene
-    this.createFromHTML('<div style="display: flex; flex-direction: column; align-items: center; width: 320px; height: 400px; font: 48px Arial"><p style="text-align: center;">Meltdown \n Atomic City</p><input type="text" placeholder="username" id="username" name="username"><input type="password" placeholder="password" id="password" name="password"><div><input type="submit" id="submit" value="Login"><button id="goToSignup" value="Sign-Up">Sign-Up</button></div></div>')
+    this.createFromHTML('<div style="display: flex; flex-direction: column; align-items: center; width: 320px; height: 400px; font: 48px Arial"><p style="text-align: center;">Meltdown \n Atomic City</p><input type="text" placeholder="create username" id="username" name="username"><input type="password" placeholder="set password" id="password" name="password"><div><button id="backToLogin" value="login"><- Login</button><input type="submit" id="signup" value="Sign-Up"></div></div>')
     this.usernameInput = this.getChildByID('username')
     this.passwordInput = this.getChildByID('password')
     this.configureLoginEvent()
@@ -26,22 +26,21 @@ export default class LoginForm extends Phaser.GameObjects.DOMElement {
     scene.add.existing(this)
   }
 
-  configureSignupEvent() {
-    const signup = this.getChildByID('goToSignup')
-    signup.addEventListener('click', this.signupHandler.bind(this))
-  }
-
   configureLoginEvent() {
-    const login = this.getChildByID('submit')
+    const login = this.getChildByID('backToLogin')
     login.addEventListener('click', this.loginHandler.bind(this))
   }
 
-  signupHandler() {
-    this.scene.showSignup()
+  configureSignupEvent() {
+    const submit = this.getChildByID('signup')
+    submit.addEventListener('click', this.signupHandler.bind(this))
   }
 
   loginHandler() {
-    this.scene.loginUser(this.usernameInput.value, this.passwordInput.value)
+    this.scene.showLogin()
   }
 
+  signupHandler() {
+    this.scene.createUser(this.usernameInput.nodeValue, this.passwordInput.value)
+  }
 }

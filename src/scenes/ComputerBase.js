@@ -43,9 +43,10 @@ export default class ComputerBase extends Phaser.Scene {
       repeat: 5
     })
 
+    this.hackButton = this.add.sprite(500, 425, 'hack').setInteractive()
     const computerBase = this.add.sprite(400, 300, 'computerbase')
     computerBase.setScale(1.5)
-    this.hackButton = this.add.sprite(500, 425, 'hack').setInteractive()
+    this.hackButton.input.enabled = false
     this.hackButton.on('pointerdown', _ => {
       if (!this.hackButton.anims.isPlaying && !this.scene.get(this.currentGame).done) {
         this.hackButton.play('hacking')
