@@ -53,20 +53,14 @@ export default class Socket extends Phaser.GameObjects.Container {
 
   msgSwitch(msg) {
     switch (msg.type) {
+      case 'PLAYER_MODEL':
+        this.scene.gameState.updatePlayers(msg.data)
+        break
       case 'PLAYER_CONNECTION':
         this.scene.gameState.addOtherPlayers(msg.data)
         break
       case 'PLAYER_DISONNECT':
         this.scene.gameState.removePlayers(msg.data)
-        break
-      case 'PLAYER_POSITION':
-        this.scene.gameState.updatePositions(msg.data)
-        break
-      case 'PLAYER_USING':
-        this.scene.gameState.updateUsing(msg.data)
-        break
-      case 'PLAYER_IDLE':
-        this.scene.gameState.updateIdle(msg.data)
         break
       default:
         this.scene.scene.get(msg.type).syncGame(msg.data)

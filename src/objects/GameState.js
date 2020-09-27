@@ -27,6 +27,34 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.impostersScore = 0
   }
 
+  update() {
+    if (this.player.active) { this.ws.sendMessage(this.player.playerUpdater()) }
+  }
+
+  playersReady() {
+    return this.otherPlayers.getChildren().every(player => player.isReady === true)
+  }
+
+  canGameStart() {
+    return this.otherPlayers.getLength() === 8 && this.playersReady()
+  }
+
+  setSocket(socket) {
+    this.ws = socket
+  }
+
+  updatePlayers(data) {
+    if (!this.playersMap.get(data.player)) this.addOtherPlayers(data)
+    this.otherPlayers.getChildren().forEach(otherPlayer => {
+      if (otherPlayer.ID === data.player) {
+        otherPlayer.x = data.position.x
+        otherPlayer.y = data.position.y
+        otherPlayer.play(data.animation, true)
+        otherPlayer.setFlipX(data.direction)
+      }
+    })
+  }
+
   addOtherPlayers(data) {
     if (!data) return
     const id = data.player
@@ -37,36 +65,6 @@ export default class GameState extends Phaser.GameObjects.Container {
       otherPlayer.ID = id
       this.otherPlayers.add(otherPlayer)
     }
-  }
-
-  updatePositions(data) {
-    if (!this.playersMap.get(data.player)) this.addOtherPlayers(data)
-    this.otherPlayers.getChildren().forEach(otherPlayer => {
-      if (otherPlayer.ID === data.player) {
-        otherPlayer.x = data.position.x
-        otherPlayer.y = data.position.y
-        otherPlayer.play('walking', true)
-        otherPlayer.setFlipX(data.direction)
-      }
-    })
-  }
-
-  updateIdle(data) {
-    if (!this.playersMap.get(data.player)) this.addOtherPlayers(data)
-    this.otherPlayers.getChildren().forEach(player => {
-      if (player.ID === data.player) {
-        player.play('idle', true)
-      }
-    })
-  }
-
-  updateUsing(data) {
-    if (!this.playersMap.get(data.player)) this.addOtherPlayers(data)
-    this.otherPlayers.getChildren().forEach(player => {
-      if (player.ID === data.player) {
-        player.play('using', true)
-      }
-    })
   }
 
   removePlayers(data) {

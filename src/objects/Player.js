@@ -14,17 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-
-const PLAYER_POSITION = 'PLAYER_POSITION'
-const PLAYER_USING = 'PLAYER_USING'
-const PLAYER_IDLE = 'PLAYER_IDLE'
+const PLAYER_MODEL = 'PLAYER_MODEL'
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, id, username) {
     super(scene, x, y, 'scientist')
-    this.ws = scene.socket
     this.imposter = false
     this.gameOver = false
+    this.active = false
+    this.isReady = false
     if (username === 'Dean') {
       this.imposter = true
     }
@@ -42,6 +40,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   update() {
+    this.active = false
     const keys = this.keys
     let currentAnimKey = 'idle'
     this.body.setVelocityY(0)
@@ -64,17 +63,37 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.body.velocity.x != 0 || this.body.velocity.y != 0) {
       this.isPlayerUsing = false
       currentAnimKey = 'walking'
-      this.sendPosition()
+      this.active = true
     } else if (this.isPlayerUsing) {
       currentAnimKey = 'using'
     } else {
       currentAnimKey = 'idle'
     }
     if (this.lastAnim !== currentAnimKey) {
+      this.active = true
       this.lastAnim = currentAnimKey
-      this.animSwitch(currentAnimKey)
       this.anims.play(currentAnimKey, true)
     }
+  }
+
+  playerUpdater() {
+    return {
+      type: PLAYER_MODEL,
+      lobby: this.lobby,
+      data: {
+        player: this.ID,
+        position: {
+          x: this.x,
+          y: this.y
+        },
+        direction: this.flipX,
+        animation: this.lastAnim
+      }
+    }
+  }
+
+  setReady(bool) {
+    this.isReady = bool
   }
 
   reset() {
@@ -84,51 +103,4 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  animSwitch(key) {
-    switch (key) {
-      case 'using':
-        this.sendUsing()
-        break
-      default:
-        this.sendIdle()
-    }
-  }
-
-  sendPosition() {
-    const msg = {
-      type: PLAYER_POSITION,
-      lobby: this.lobby,
-      data: {
-        player: this.ID,
-        position: {
-          x: this.x,
-          y: this.y
-        },
-        direction: this.flipX
-      }
-    }
-    return this.ws.sendMessage(msg)
-  }
-
-  sendIdle() {
-    const msg = {
-      type: PLAYER_IDLE,
-      lobby: this.lobby,
-      data: {
-        player: this.ID
-      }
-    }
-    return this.ws.sendMessage(msg)
-  }
-
-  sendUsing() {
-    const msg = {
-      type: PLAYER_USING,
-      lobby: this.lobby,
-      data: {
-        player: this.ID
-      }
-    }
-    return this.ws.sendMessage(msg)
-  }
 }
