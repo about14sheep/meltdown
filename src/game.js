@@ -16,6 +16,7 @@
 
 import 'phaser'
 
+import UIScene from './scenes/UIScene'
 import ComputerBase from './scenes/ComputerBase'
 import Login from './scenes/Login'
 
@@ -30,7 +31,7 @@ const config = {
   dom: {
     createContainer: true
   },
-  scene: [Login, ComputerBase]
+  scene: [UIScene, Login, ComputerBase]
 }
 
 export const game = new Phaser.Game(config)

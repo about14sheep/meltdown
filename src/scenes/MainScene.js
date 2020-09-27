@@ -79,11 +79,11 @@ export default class MainScene extends Phaser.Scene {
     this.computer.loadMiniGame(employeeGameKey, employeeGame)
     this.computer.loadMiniGame(placeGameKey, placeGame)
     this.computer.loadMiniGame(serverGameKey, serverGame)
+    this.scene.bringToTop('ui')
   }
 
   update() {
     this.player.update()
-    this.socket.update()
     if (this.computer.calculateGame() === 'imposters') {
       this.gameState.impostersScore++
       console.log(`imposters won; ${this.gameState.minutesToMidnight()} minutes to midnight`)
