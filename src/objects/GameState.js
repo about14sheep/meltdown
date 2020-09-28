@@ -21,8 +21,10 @@ export default class GameState extends Phaser.GameObjects.Container {
     super(scene)
     this.scene = scene
     this.player = scene.player
+    this.miniGameStates = new Map()
     this.playersMap = new Map()
     this.otherPlayers = scene.physics.add.group()
+    this.miniGameBarLastPosition = {}
     this.playersScore = 0
     this.impostersScore = 0
   }
@@ -43,14 +45,28 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.ws = socket
   }
 
+  tetherMiniGame(game) {
+    const barPos = {
+      x: game.bar.x,
+      y: game.bar.y
+    }
+    if (this.miniGameBarLastPosition != barPos) {
+      this.ws.sendMessage({ type: game.handle, data: barPos })
+      this.miniGameBarLastPosition = barPos
+    }
+  }
+
   updatePlayers(data) {
     if (!this.playersMap.get(data.player)) this.addOtherPlayers(data)
     this.otherPlayers.getChildren().forEach(otherPlayer => {
       if (otherPlayer.ID === data.player) {
         otherPlayer.x = data.position.x
         otherPlayer.y = data.position.y
-        otherPlayer.play(data.animation, true)
         otherPlayer.setFlipX(data.direction)
+        if (otherPlayer.lastAnim !== data.animation) {
+          otherPlayer.lastAnim = data.animation
+          otherPlayer.play(data.animation, true)
+        }
       }
     })
   }

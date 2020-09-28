@@ -22,7 +22,6 @@ export default class ComputerBase extends Phaser.Scene {
     this.currentGame = ''
     this.miniGameBarLastPosition = {}
     this.minigames = []
-    this.ws = null
     this.count = 0
     this.baseKey = 'computer'
   }
@@ -51,7 +50,7 @@ export default class ComputerBase extends Phaser.Scene {
       if (!this.hackButton.anims.isPlaying && !this.scene.get(this.currentGame).done) {
         this.hackButton.play('hacking')
         this.scene.get(this.currentGame).recieveTilt()
-        this.tetherMiniGame(this.scene.get(this.currentGame))
+        this.gameState.tetherMiniGame(this.scene.get(this.currentGame))
       }
     })
     this.hackButton.setScale(2)
@@ -66,12 +65,13 @@ export default class ComputerBase extends Phaser.Scene {
   displayMiniGame(key, imposter) {
     this.hackButton.setVisible(false)
     this.hackButton.input.enabled = false
+    this.scene.get(key).bar.input.enabled = false
     this.scene.bringToTop(this.baseKey)
     this.currentGame = key
     this.scene.moveAbove(this.baseKey, key)
     if (!this.scene.get(key).count < 15 && !imposter) {
       this.scene.get(key).bar.input.enabled = true
-      this.tetherMiniGame(this.scene.get(key))
+      this.gameState.tetherMiniGame(this.scene.get(key))
     } else if (imposter) {
       this.hackButton.setVisible(true)
       this.scene.bringToTop('hack')
@@ -79,25 +79,6 @@ export default class ComputerBase extends Phaser.Scene {
       this.scene.get(key).bar.input.enabled = false
     }
 
-  }
-
-  tetherMiniGame(game) {
-    const barPos = {
-      x: game.bar.x,
-      y: game.bar.y
-    }
-    if (this.miniGameBarLastPosition != barPos) {
-      const msg = this.buildMessage(barPos, game.handle)
-      this.ws.sendMessage(msg)
-      this.miniGameBarLastPosition = barPos
-    }
-  }
-
-  buildMessage(position, handle) {
-    return {
-      type: handle,
-      data: position
-    }
   }
 
   calculateGame() {
@@ -143,8 +124,8 @@ export default class ComputerBase extends Phaser.Scene {
     return result
   }
 
-  setSocket(socket) {
-    this.ws = socket
+  setGameState(state) {
+    this.gameState = state
   }
 
 }
