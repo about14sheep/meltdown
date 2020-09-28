@@ -88,6 +88,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.otherPlayers.getChildren().forEach(otherPlayer => {
       if (otherPlayer.ID === data.player) {
         otherPlayer.setPosition(data.position.x, data.position.y)
+        otherPlayer.updateNameTag()
         otherPlayer.setFlipX(data.direction)
         otherPlayer.isRett = data.ready
         if (otherPlayer.lastAnim !== data.animation) {
@@ -108,7 +109,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     if (this.playersMap.get(id)) return
     this.playersMap.set(id, data.position)
     if (id != this.player.ID) {
-      const otherPlayer = new Player(this.scene, data.position.x, data.position.y, id, data.username)
+      const otherPlayer = new Player(this.scene, data.position.x, data.position.y, id, data.username, true)
       this.otherPlayers.add(otherPlayer)
     }
   }
@@ -119,6 +120,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.otherPlayers.getChildren().forEach(player => {
       if (player.ID === data.player) {
         player.destroy()
+        player.nameTag.destroy()
       }
     })
   }

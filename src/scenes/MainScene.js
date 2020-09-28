@@ -52,7 +52,7 @@ export default class MainScene extends Phaser.Scene {
     this.impGame = null
     const tileset = this.map.addTilesetImage("factory_tileset", "tiles")
     const [walls, usableTops, computers, desks, usableBottoms, pipes] = this.configureMapLayersFromTileset(tileset)
-    this.player = new Player(this, 400, 300, this.playerData.id, this.playerData.username)
+    this.player = new Player(this, 400, 300, this.playerData.id, this.playerData.username, false)
     this.gameState = new GameState(this)
     usableBottoms.setTileIndexCallback(['1325', '1277', '1329'], this.useTile, this.player, this.map)
     this.gameTiles = usableBottoms.filterTiles(this.checkForTiles).map(tile => `${tile.x}${tile.y}`)

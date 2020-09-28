@@ -17,7 +17,7 @@
 const PLAYER_MODEL = 'PLAYER_MODEL'
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, id, username) {
+  constructor(scene, x, y, id, username, nameTag) {
     super(scene, x, y, 'scientist')
     this.imposter = false
     this.gameOver = false
@@ -31,6 +31,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.isPlayerUsing = false
     this.lastAnim = null
     this.velocity = 250
+    this.nameTag = scene.add.text(x - 16, (y - 40), username).setVisible(nameTag)
     this.keys = scene.input.keyboard.addKeys('W,S,A,D')
     this.ID = id
     this.username = username
@@ -73,11 +74,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  updateNameTag() {
+    this.nameTag.setPosition(this.x - 16, this.y - 40)
+  }
+
   playerUpdater() {
     return {
       type: PLAYER_MODEL,
       lobby: this.lobby,
       data: {
+        username: this.username,
         player: this.ID,
         position: {
           x: this.x,
