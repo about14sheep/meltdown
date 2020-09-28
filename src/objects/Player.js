@@ -75,7 +75,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   updateNameTag() {
-    this.nameTag.setPosition(this.x - 16, this.y - 40)
+    this.nameTag.setPosition(this.x - (this.nameTag.displayWidth / 2), this.y - 40)
   }
 
   playerUpdater() {
