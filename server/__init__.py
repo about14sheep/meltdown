@@ -22,6 +22,7 @@ import logging
 import eventlet
 import redis
 import json
+import random
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 from flask_cors import CORS
@@ -43,6 +44,7 @@ db.init_app(app)
 login_manager = LoginManager(app)
 jwt = JWTManager(app)
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
+lobbyImposters = {}
 players = []
 
 
@@ -114,7 +116,6 @@ def lobby(id):
         userId = json.loads(request.json)['id']
         user = User.query.get(userId)
         lobby.users.append(user)
-        print('USERS IN GIVEN LOBBY', lobby.users)
         db.session.commit()
     return lob
 
@@ -129,6 +130,8 @@ def build_player(msg):
 @socketio.on('join')
 def on_join(data):
     join_room(data['lobby'])
+    lobbyImposters[data['lobby']] = (random.choice(
+        [0, 1, 2, 3]), random.choice([4, 5, 6, 7]))
     msg = {
         'type': 'PLAYER_CONNECTION',
         'lobby': data['lobby'],
@@ -148,7 +151,6 @@ def on_join(data):
 @socketio.on('leave')
 def on_leave(data):
     leave_room(data['lobby'])
-    print('player_disconnect')
     msg = {
         'type': 'PLAYER_DISONNECT',
         'data': {
@@ -181,7 +183,16 @@ def handle_disconnect():
 
 @socketio.on('message')
 def handle_message(message, room):
-    send(message, room=room)
+    if message['type'] == 'GAME_START':
+        print(message)
+        imposter_tup = lobbyImposters[message['lobby']]
+        msg = {
+            'type': 'START_GAME',
+            'data': [imposter_tup[0], imposter_tup[1]]
+        }
+        send(msg)
+    else:
+        send(message, room=room)
 
 
 if __name__ == "__main__":

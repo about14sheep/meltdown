@@ -62,6 +62,9 @@ export default class Socket extends Phaser.GameObjects.Container {
       case 'PLAYER_DISONNECT':
         this.scene.gameState.removePlayers(msg.data)
         break
+      case 'START_GAME':
+        this.scene.gameState.setImposters(msg.data)
+        break
       default:
         this.scene.scene.get(msg.type).syncGame(msg.data)
     }

@@ -33,8 +33,8 @@ export default class UIScene extends Phaser.Scene {
     this.readyButton = this.add.sprite(400, 500, 'readyButton').setInteractive()
     this.readyButton.setScale(3)
     this.readyButton.on('pointerdown', _ => {
-      this.gameState.readyPlayerOne()
-      this.readyChecked ? this.readyChecked = false : this.readyChecked = true
+      this.gameState.readyPlayerOne(!this.readyChecked)
+      this.readyChecked = !this.readyChecked
     })
   }
 

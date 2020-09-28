@@ -22,8 +22,10 @@ export default class GameState extends Phaser.GameObjects.Container {
     super(scene)
     this.scene = scene
     this.player = scene.player
+    this.gameStarted = false
     this.ws = new Socket(scene)
     this.playersMap = new Map()
+    this.lobbySize = 1
     this.otherPlayers = scene.physics.add.group()
     this.miniGameBarLastPosition = {}
     this.playerLastUpdate = {}
@@ -33,6 +35,13 @@ export default class GameState extends Phaser.GameObjects.Container {
 
   update() {
     this.sendPlayerUpdate()
+
+    if (this.otherPlayers.getChildren().length === this.lobbySize && this.playersReady().length === this.otherPlayers.getChildren().length) {
+      if (!this.gameStarted) {
+        this.sendStartGame()
+        this.gameStarted = true
+      }
+    }
   }
 
   sendPlayerUpdate() {
@@ -44,11 +53,23 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   playersReady() {
-    return this.otherPlayers.getChildren().every(player => player.isReady === true)
+    return this.otherPlayers.getChildren().filter(el => el.isRett === true)
   }
 
-  canGameStart() {
-    return this.otherPlayers.getLength() === 8 && this.playersReady()
+
+  sendStartGame() {
+    const msg = {
+      type: 'GAME_START',
+      lobby: this.scene.lobbyID,
+      data: {
+        players: this.gatherPlayerIds()
+      }
+    }
+    this.ws.sendMessage(msg)
+  }
+
+  gatherPlayerIds() {
+    return this.otherPlayers.getChildren().map(el => el.ID)
   }
 
   tetherMiniGame(game) {
@@ -68,12 +89,17 @@ export default class GameState extends Phaser.GameObjects.Container {
       if (otherPlayer.ID === data.player) {
         otherPlayer.setPosition(data.position.x, data.position.y)
         otherPlayer.setFlipX(data.direction)
+        otherPlayer.isRett = data.ready
         if (otherPlayer.lastAnim !== data.animation) {
           otherPlayer.lastAnim = data.animation
           otherPlayer.play(data.animation, true)
         }
       }
     })
+  }
+
+  setImposters(imps) {
+    console.log(imps)
   }
 
   addOtherPlayers(data) {
@@ -101,8 +127,8 @@ export default class GameState extends Phaser.GameObjects.Container {
     return this.impostersScore < 3 ? 12 / (this.impostersScore + 1) : 0
   }
 
-  readyPlayerOne() {
-    this.player.setReady()
+  readyPlayerOne(bool) {
+    this.player.isRett = bool
   }
 
   reset() {
@@ -131,7 +157,7 @@ export default class GameState extends Phaser.GameObjects.Container {
       const val1 = obj1[key]
       const val2 = obj2[key]
       const areObjects = (val1 != null && typeof val1 === 'object') && (val2 != null && typeof val2 === 'object')
-      if (areObjects && !this.checkEqual(val1, val2) || (!areObjects && val1 !== val2)) {
+      if (areObjects && !this.__checkEqual(val1, val2) || (!areObjects && val1 !== val2)) {
         return false
       }
     }

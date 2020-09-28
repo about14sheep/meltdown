@@ -21,7 +21,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, 'scientist')
     this.imposter = false
     this.gameOver = false
-    this.isReady = false
+    this.isRett = false
     if (username === 'Dean') {
       this.imposter = true
     }
@@ -84,14 +84,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           y: this.y
         },
         direction: this.flipX,
-        ready: this.isReady,
+        ready: this.isRett,
         animation: this.lastAnim
       }
     }
-  }
-
-  setReady() {
-    this.isReady = this.isReady ? false : true
   }
 
   configureAnimations(scene) {

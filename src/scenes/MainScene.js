@@ -79,7 +79,6 @@ export default class MainScene extends Phaser.Scene {
   }
 
   update() {
-    this.player.setReady(this.ui.readyCheck)
     this.player.update()
     this.gameState.update()
     if (this.computer.calculateGame() === 'imposters') {
