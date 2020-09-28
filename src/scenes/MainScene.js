@@ -65,6 +65,7 @@ export default class MainScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player)
     this.computer = this.scene.get('computer')
     this.ui = this.scene.get('ui')
+    this.ui.setGameState(this.gameState)
     this.computer.setGameState(this.gameState)
     this.computer.loadMiniGame(sliderGameKey, sliderGame)
     this.computer.loadMiniGame(upSliderGameKey, upSliderGame)

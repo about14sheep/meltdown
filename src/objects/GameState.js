@@ -26,12 +26,21 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.playersMap = new Map()
     this.otherPlayers = scene.physics.add.group()
     this.miniGameBarLastPosition = {}
+    this.playerLastUpdate = {}
     this.playersScore = 0
     this.impostersScore = 0
   }
 
   update() {
-    if (this.player.active) { this.ws.sendMessage(this.player.playerUpdater()) }
+    this.sendPlayerUpdate()
+  }
+
+  sendPlayerUpdate() {
+    const playerUpdate = this.player.playerUpdater()
+    if (!this.__checkEqual(this.playerLastUpdate, playerUpdate)) {
+      this.playerLastUpdate = playerUpdate
+      this.ws.sendMessage(playerUpdate)
+    }
   }
 
   playersReady() {
@@ -47,24 +56,10 @@ export default class GameState extends Phaser.GameObjects.Container {
       x: game.bar.x,
       y: game.bar.y
     }
-    if (!this.checkEqual(this.miniGameBarLastPosition, barPos)) {
+    if (!this.__checkEqual(this.miniGameBarLastPosition, barPos)) {
       this.ws.sendMessage({ type: game.handle, data: barPos })
       this.miniGameBarLastPosition = barPos
     }
-  }
-
-  checkEqual(obj1, obj2) {
-    const obj1Keys = Object.keys(obj1)
-    const obj2Keys = Object.keys(obj2)
-    if (obj1Keys.length !== obj2Keys.length) {
-      return false
-    }
-    for (let key of obj1Keys) {
-      if (obj1[key] !== obj2[key]) {
-        return false
-      }
-    }
-    return true
   }
 
   updatePlayers(data) {
@@ -106,6 +101,10 @@ export default class GameState extends Phaser.GameObjects.Container {
     return this.impostersScore < 3 ? 12 / (this.impostersScore + 1) : 0
   }
 
+  readyPlayerOne() {
+    this.player.setReady()
+  }
+
   reset() {
     if (this.impostersScore === 3 || this.playersScore === 3) {
       this.impostersScore = 0
@@ -120,5 +119,22 @@ export default class GameState extends Phaser.GameObjects.Container {
         player.reset()
       })
     }
+  }
+
+  __checkEqual(obj1, obj2) {
+    const obj1Keys = Object.keys(obj1)
+    const obj2Keys = Object.keys(obj2)
+    if (obj1Keys.length !== obj2Keys.length) {
+      return false
+    }
+    for (let key of obj1Keys) {
+      const val1 = obj1[key]
+      const val2 = obj2[key]
+      const areObjects = (val1 != null && typeof val1 === 'object') && (val2 != null && typeof val2 === 'object')
+      if (areObjects && !this.checkEqual(val1, val2) || (!areObjects && val1 !== val2)) {
+        return false
+      }
+    }
+    return true
   }
 }

@@ -21,7 +21,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, 'scientist')
     this.imposter = false
     this.gameOver = false
-    this.active = false
     this.isReady = false
     if (username === 'Dean') {
       this.imposter = true
@@ -41,27 +40,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   update() {
-    this.active = false
     const keys = this.keys
     let currentAnimKey = 'idle'
     this.body.setVelocityY(0)
     this.body.setVelocityX(0)
 
     if (keys.A.isDown) {
-      this.active = true
       this.body.setVelocityX(-this.velocity)
       this.setFlipX(true)
     } else if (keys.D.isDown) {
-      this.active = true
       this.body.setVelocityX(this.velocity)
       this.setFlipX(false)
     }
 
     if (keys.W.isDown) {
-      this.active = true
       this.body.setVelocityY(-this.velocity)
     } else if (keys.S.isDown) {
-      this.active = true
       this.body.setVelocityY(this.velocity)
     }
 
@@ -74,7 +68,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       currentAnimKey = 'idle'
     }
     if (this.lastAnim !== currentAnimKey) {
-      this.active = true
       this.lastAnim = currentAnimKey
       this.anims.play(currentAnimKey, true)
     }
@@ -91,13 +84,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
           y: this.y
         },
         direction: this.flipX,
+        ready: this.isReady,
         animation: this.lastAnim
       }
     }
   }
 
-  setReady(bool) {
-    this.isReady = bool
+  setReady() {
+    this.isReady = this.isReady ? false : true
   }
 
   configureAnimations(scene) {
