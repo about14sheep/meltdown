@@ -44,6 +44,11 @@ export default class UIScene extends Phaser.Scene {
     this.readyChecked ? this.readyButton.setFrame(1) : this.readyButton.setFrame(0)
     if (this.gameState) {
       this.ticker.updateTicker(this.gameState.alertMessage())
+      if (this.gameState.gameStarted) {
+        this.ticker.updateTicker(this.gameState.gameStartMessage())
+        this.readyButton.disableInteractive()
+        this.readyButton.setVisible(false)
+      }
     }
   }
 

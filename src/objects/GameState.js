@@ -26,7 +26,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.alert = ''
     this.ws = new Socket(scene)
     this.playersMap = new Map()
-    this.lobbySize = 1
+    this.lobbySize = 2
     this.otherPlayers = scene.physics.add.group()
     this.miniGameBarLastPosition = {}
     this.playerLastUpdate = {}
@@ -37,7 +37,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   update() {
     this.sendPlayerUpdate()
 
-    if (this.otherPlayers.getChildren().length === this.lobbySize && this.playersReady().length === this.otherPlayers.getChildren().length) {
+    if (((this.otherPlayers.getChildren().length + 1) === this.lobbySize) && ((this.playersReady().length + (this.player.isRett ? 1 : 0)) === (this.otherPlayers.getChildren().length + 1))) {
       if (!this.gameStarted) {
         this.sendStartGame()
         this.gameStarted = true
@@ -58,11 +58,15 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   alertMessage() {
-    if (this.otherPlayers.getChildren().length === this.lobbySize) {
+    if (this.otherPlayers.getChildren().length + 1 === this.lobbySize) {
       return `(${this.playersReady().length + (this.player.isRett ? 1 : 0)} / 8) Waiting for players to ready..`
     } else {
       return `(${this.otherPlayers.getChildren().length + 1} / 8) Waiting for players to join..`
     }
+  }
+
+  gameStartMessage() {
+    return this.player.imposter ? 'Boom this lab by any means!' : 'Find the Imposters and save this lab!'
   }
 
 
@@ -109,7 +113,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   setImposters(imps) {
-    console.log(imps)
+    this.player.reset()
   }
 
   addOtherPlayers(data) {

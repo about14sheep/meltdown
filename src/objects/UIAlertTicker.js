@@ -9,4 +9,9 @@ export default class UIAlertTicker extends Phaser.GameObjects.Container {
     this.text.setText(msg)
     this.text.setPosition(400 - (this.text.displayWidth / 2), 100)
   }
+
+  clearTicker() {
+    this.text.setText('')
+    this.text.setPosition(0, 0)
+  }
 }
