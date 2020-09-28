@@ -23,6 +23,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.scene = scene
     this.player = scene.player
     this.gameStarted = false
+    this.alert = ''
     this.ws = new Socket(scene)
     this.playersMap = new Map()
     this.lobbySize = 1
@@ -54,6 +55,14 @@ export default class GameState extends Phaser.GameObjects.Container {
 
   playersReady() {
     return this.otherPlayers.getChildren().filter(el => el.isRett === true)
+  }
+
+  alertMessage() {
+    if (this.otherPlayers.getChildren().length === this.lobbySize) {
+      return `(${this.playersReady().length + (this.player.isRett ? 1 : 0)} / 8) Waiting for players to ready..`
+    } else {
+      return `(${this.otherPlayers.getChildren().length + 1} / 8) Waiting for players to join..`
+    }
   }
 
 

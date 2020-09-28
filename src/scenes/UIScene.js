@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import ReadyButton from '../assets/ready_button_spritesheet.png'
+import UIAlertTicker from '../objects/UIAlertTicker'
 
 export default class UIScene extends Phaser.Scene {
   constructor() {
@@ -31,6 +32,7 @@ export default class UIScene extends Phaser.Scene {
 
   create() {
     this.readyButton = this.add.sprite(400, 500, 'readyButton').setInteractive()
+    this.ticker = new UIAlertTicker(this)
     this.readyButton.setScale(3)
     this.readyButton.on('pointerdown', _ => {
       this.gameState.readyPlayerOne(!this.readyChecked)
@@ -40,6 +42,9 @@ export default class UIScene extends Phaser.Scene {
 
   update() {
     this.readyChecked ? this.readyButton.setFrame(1) : this.readyButton.setFrame(0)
+    if (this.gameState) {
+      this.ticker.updateTicker(this.gameState.alertMessage())
+    }
   }
 
   setGameState(state) {
