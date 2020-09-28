@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+import Socket from './Socket'
 import Player from './Player'
 
 export default class GameState extends Phaser.GameObjects.Container {
@@ -21,6 +22,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     super(scene)
     this.scene = scene
     this.player = scene.player
+    this.ws = new Socket(scene)
     this.playersMap = new Map()
     this.otherPlayers = scene.physics.add.group()
     this.miniGameBarLastPosition = {}
@@ -38,10 +40,6 @@ export default class GameState extends Phaser.GameObjects.Container {
 
   canGameStart() {
     return this.otherPlayers.getLength() === 8 && this.playersReady()
-  }
-
-  setSocket(socket) {
-    this.ws = socket
   }
 
   tetherMiniGame(game) {
@@ -73,8 +71,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     if (!this.playersMap.get(data.player)) this.addOtherPlayers(data)
     this.otherPlayers.getChildren().forEach(otherPlayer => {
       if (otherPlayer.ID === data.player) {
-        otherPlayer.x = data.position.x
-        otherPlayer.y = data.position.y
+        otherPlayer.setPosition(data.position.x, data.position.y)
         otherPlayer.setFlipX(data.direction)
         if (otherPlayer.lastAnim !== data.animation) {
           otherPlayer.lastAnim = data.animation
@@ -91,7 +88,6 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.playersMap.set(id, data.position)
     if (id != this.player.ID) {
       const otherPlayer = new Player(this.scene, data.position.x, data.position.y, id, data.username)
-      otherPlayer.ID = id
       this.otherPlayers.add(otherPlayer)
     }
   }

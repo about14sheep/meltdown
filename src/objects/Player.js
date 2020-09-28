@@ -37,6 +37,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.username = username
     scene.add.existing(this)
     scene.physics.add.existing(this)
+    this.configureAnimations(scene)
   }
 
   update() {
@@ -47,23 +48,26 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.body.setVelocityX(0)
 
     if (keys.A.isDown) {
+      this.active = true
       this.body.setVelocityX(-this.velocity)
       this.setFlipX(true)
     } else if (keys.D.isDown) {
+      this.active = true
       this.body.setVelocityX(this.velocity)
       this.setFlipX(false)
     }
 
     if (keys.W.isDown) {
+      this.active = true
       this.body.setVelocityY(-this.velocity)
     } else if (keys.S.isDown) {
+      this.active = true
       this.body.setVelocityY(this.velocity)
     }
 
     if (this.body.velocity.x != 0 || this.body.velocity.y != 0) {
       this.isPlayerUsing = false
       currentAnimKey = 'walking'
-      this.active = true
     } else if (this.isPlayerUsing) {
       currentAnimKey = 'using'
     } else {
@@ -94,6 +98,29 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   setReady(bool) {
     this.isReady = bool
+  }
+
+  configureAnimations(scene) {
+    scene.anims.create({
+      key: 'walking',
+      frames: scene.anims.generateFrameNumbers('scientist', {
+        start: 3, end: 2
+      }),
+      frameRate: 4,
+      repeat: -1
+    })
+
+    scene.anims.create({
+      key: 'idle',
+      frames: [{ key: 'scientist', frame: 0 }],
+      frameRate: 1,
+    })
+
+    scene.anims.create({
+      key: 'using',
+      frames: [{ key: 'scientist', frame: 1 }],
+      frameRate: 1,
+    })
   }
 
   reset() {

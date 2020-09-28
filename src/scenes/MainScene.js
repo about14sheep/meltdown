@@ -15,7 +15,6 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import Player from '../objects/Player'
-import Socket from '../objects/Socket'
 import GameState from '../objects/GameState'
 import { sliderGame, sliderGameKey, upSliderGameKey, upSliderGame, bottomGame, bottomGameKey, downloadGame, downloadGameKey, employeeGame, employeeGameKey, placeGame, placeGameKey, serverGameKey, serverGame, trashGame, trashGameKey } from '../actions/MiniGames'
 
@@ -52,13 +51,9 @@ export default class MainScene extends Phaser.Scene {
     this.map = this.make.tilemap({ key: 'map' })
     this.impGame = null
     const tileset = this.map.addTilesetImage("factory_tileset", "tiles")
-    this.createAnimsForScientist()
-
     const [walls, usableTops, computers, desks, usableBottoms, pipes] = this.configureMapLayersFromTileset(tileset)
-    this.socket = new Socket(this)
     this.player = new Player(this, 400, 300, this.playerData.id, this.playerData.username)
     this.gameState = new GameState(this)
-    this.gameState.setSocket(this.socket)
     usableBottoms.setTileIndexCallback(['1325', '1277', '1329'], this.useTile, this.player, this.map)
     this.gameTiles = usableBottoms.filterTiles(this.checkForTiles).map(tile => `${tile.x}${tile.y}`)
     this.physics.add.collider(this.player, walls)
@@ -67,8 +62,6 @@ export default class MainScene extends Phaser.Scene {
     this.physics.add.collider(this.player, desks)
     this.physics.add.overlap(this.player, usableBottoms)
     this.physics.add.collider(this.player, pipes)
-
-    this.otherPlayers = this.physics.add.group()
     this.cameras.main.startFollow(this.player)
     this.computer = this.scene.get('computer')
     this.ui = this.scene.get('ui')
@@ -163,30 +156,6 @@ export default class MainScene extends Phaser.Scene {
     const accents = this.map.createStaticLayer('accents', tileset, 0, 0)
     accents.setScale(3)
     return [floor, walls, desks, computers, usableBottoms, usableTops, pipes, accents]
-
-  }
-
-  createAnimsForScientist() {
-    this.anims.create({
-      key: 'walking',
-      frames: this.anims.generateFrameNumbers('scientist', {
-        prefix: 'scientist_', start: 3, end: 2
-      }),
-      frameRate: 4,
-      repeat: -1
-    })
-
-    this.anims.create({
-      key: 'idle',
-      frames: [{ key: 'scientist', frame: 0 }],
-      frameRate: 1,
-    })
-
-    this.anims.create({
-      key: 'using',
-      frames: [{ key: 'scientist', frame: 1 }],
-      frameRate: 1,
-    })
 
   }
 
