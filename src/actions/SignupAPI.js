@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 export default async function signup(username, password) {
-  const res = await fetch('http://localhost:3000/api/session', {
+  const res = await fetch('/api/session', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

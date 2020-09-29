@@ -16,7 +16,7 @@
 
 
 export default async function login(username, password) {
-  const res = await fetch('http://localhost:3000/api/session', {
+  const res = await fetch('/api/session', {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'

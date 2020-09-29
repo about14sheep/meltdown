@@ -24,6 +24,7 @@ export default class UIScene extends Phaser.Scene {
   }
 
   preload() {
+    this.load.setBaseURL('/static')
     this.load.spritesheet('readyButton', ReadyButton, {
       frameWidth: 35,
       frameHeight: 21

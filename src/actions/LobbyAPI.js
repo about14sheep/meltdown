@@ -15,7 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 export const getLobbies = async _ => {
-  const res = await fetch('http://localhost:3000/api/lobbies')
+  const res = await fetch('/api/lobbies')
   if (res.ok) {
     const { lobbies } = await res.json()
     return lobbies
@@ -26,7 +26,7 @@ export const getLobbies = async _ => {
 }
 
 export const checkLobby = async id => {
-  const res = await fetch(`http://localhost:3000/api/lobby/${id}`)
+  const res = await fetch(`/api/lobby/${id}`)
   if (res.ok) {
     const { player_max, player_count } = await res.json()
     return player_count === player_max
@@ -38,7 +38,7 @@ export const checkLobby = async id => {
 }
 
 export const joinLobby = async (lobbyId, user) => {
-  const res = await fetch(`http://localhost:3000/api/lobby/${lobbyId}`, {
+  const res = await fetch(`/api/lobby/${lobbyId}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json'

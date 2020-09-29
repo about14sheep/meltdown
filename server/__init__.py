@@ -20,7 +20,6 @@ from .config import Config
 import os
 import logging
 import eventlet
-import redis
 import json
 import random
 from flask import Flask, request, jsonify
@@ -38,12 +37,13 @@ app = Flask(__name__)
 app.config.from_object(Config)
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger('flask_cors').level = logging.DEBUG
-redis = redis.from_url(REDIS_URL)
-socketio = SocketIO(app, cors_allowed_origins='http://localhost:8080')
+# socketio = SocketIO(app, cors_allowed_origins='http://localhost:8080')
+socketio = SocketIO(
+    app, cors_allowed_origins='https://meltdowntts.herokuapp.com')
 db.init_app(app)
 login_manager = LoginManager(app)
 jwt = JWTManager(app)
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
+CORS(app)
 lobbyImposters = {}
 players = []
 
@@ -55,8 +55,7 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    res = User.query.all()
-    return {'users': [user.to_dict() for user in res]}
+    return app.send_static_file("index.html")
 
 
 @app.route('/api/session', methods=['PUT', 'POST', 'DELETE'])
