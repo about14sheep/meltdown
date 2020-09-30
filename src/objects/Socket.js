@@ -15,13 +15,11 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import io from 'socket.io-client'
-import { ws_host } from '../config.js'
 export default class Socket extends Phaser.GameObjects.Container {
   constructor(scene) {
     super(scene)
     this.scene = scene
     this.socket = io(`wss://${window.location.host}`)
-    console.log(ws_host)
     this.lobbyId = scene.lobbyID
     this.configure(this.socket)
   }
@@ -67,7 +65,7 @@ export default class Socket extends Phaser.GameObjects.Container {
         this.scene.gameState.setImposters(msg.data)
         break
       default:
-        this.scene.scene.get(msg.type).syncGame(msg.data)
+        this.scene.gameState.updateMiniGame(msg)
     }
   }
 

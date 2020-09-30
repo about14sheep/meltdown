@@ -22,6 +22,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     super(scene)
     this.scene = scene
     this.player = scene.player
+    this.minigames = new Map()
     this.gameStarted = false
     this.alert = ''
     this.ws = new Socket(scene)
@@ -67,6 +68,10 @@ export default class GameState extends Phaser.GameObjects.Container {
 
   gameStartMessage() {
     return this.player.imposter ? 'Boom this lab by any means!' : 'Find the Imposters and save this lab!'
+  }
+
+  updateMiniGame({ type, data }) {
+    this.minigames.set(type, { x: data.x, y: data.y })
   }
 
 

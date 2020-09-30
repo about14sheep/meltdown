@@ -1,1 +1,0 @@
-export const ws_host = `ws://${window.location.hostname}:3000`

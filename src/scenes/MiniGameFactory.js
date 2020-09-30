@@ -25,6 +25,7 @@ export default class MiniGameFactory extends Phaser.Scene {
     this.barGoal = barGoal
     this.countDownStarted = false
     this.count = 0
+    this.isActive = false
     this.baseImage = {
       string: base.string,
       image: base.image
