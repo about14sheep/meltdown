@@ -46,7 +46,7 @@ export default class ComputerBase extends Phaser.Scene {
     this.hackButton = this.add.sprite(400, 400, 'hack').setInteractive()
     computerBase.setScale(1.5)
     this.hackButton.setVisible(false)
-    this.hackButton.input.enabled = false
+    this.hackButton.disableInteractive()
     this.hackButton.on('pointerdown', _ => {
       if (!this.hackButton.anims.isPlaying && !this.scene.get(this.currentGame).done) {
         this.hackButton.play('hacking')
@@ -65,28 +65,29 @@ export default class ComputerBase extends Phaser.Scene {
   }
 
   displayMiniGame(key, imposter) {
-    if (!this.scene.get(key).isActive || imposter) {
+    const minigame = this.mountGame(key)
+    minigame.bar.disableInteractive()
+    if (!minigame.isActive || imposter) {
       const miniGameBarPosition = this.gameState.minigames.get(key)
-      this.scene.get(key).syncGame(miniGameBarPosition)
-      this.scene.get(key).isActive = true
+      minigame.syncGame(miniGameBarPosition)
+      minigame.isActive = true
     }
+    if (!minigame.count < 15 && !imposter) {
+      minigame.bar.setInteractive()
+      this.gameState.tetherMiniGame(minigame)
+    } else if (imposter) {
+      minigame.bar.disableInteractive()
+      this.scene.bringToTop('hack')
+      this.hackButton.setVisible(true)
+      this.hackButton.setInteractive()
+    }
+  }
 
-    this.hackButton.setVisible(false)
-    this.hackButton.input.enabled = false
-    this.scene.get(key).bar.input.enabled = false
+  mountGame(key) {
     this.scene.bringToTop(this.baseKey)
     this.currentGame = key
     this.scene.moveAbove(this.baseKey, key)
-    if (!this.scene.get(key).count < 15 && !imposter) {
-      this.scene.get(key).bar.input.enabled = true
-      this.gameState.tetherMiniGame(this.scene.get(key))
-    } else if (imposter) {
-      this.hackButton.setVisible(true)
-      this.scene.bringToTop('hack')
-      this.hackButton.input.enabled = true
-      this.scene.get(key).bar.input.enabled = false
-    }
-
+    return this.scene.get(key)
   }
 
   calculateGame() {
@@ -109,7 +110,7 @@ export default class ComputerBase extends Phaser.Scene {
 
   hideMiniGame() {
     if (this.currentGame) {
-      this.scene.get(this.currentGame).bar.input.enabled = false
+      this.scene.get(this.currentGame).bar.disableInteractive()
       this.scene.get(this.currentGame).isActive = false
     }
     if (this.imp) {

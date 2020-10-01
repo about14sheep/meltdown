@@ -90,7 +90,7 @@ export default class MiniGameFactory extends Phaser.Scene {
     }
     if (this.count === 15) {
       this.anim.setVisible(true)
-      this.bar.input.enabled = false
+      this.bar.setInteractive(false)
       this.count = 0
       this.done = true
       clearInterval(this.timer)
