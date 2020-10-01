@@ -32,7 +32,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.setBaseURL('/static')
+    // this.load.setBaseURL('/static')
     this.load.image('grass', Grass)
     this.load.spritesheet('tiles', FactoryTiles, {
       frameWidth: 16,

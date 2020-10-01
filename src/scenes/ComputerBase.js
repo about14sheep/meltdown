@@ -27,7 +27,7 @@ export default class ComputerBase extends Phaser.Scene {
   }
 
   preload() {
-    this.load.setBaseURL('/static')
+    // this.load.setBaseURL('/static')
     this.load.image('computerbase', ComputerBaseImage)
     this.load.spritesheet('hack', HackIcon, {
       frameWidth: 54,
@@ -72,7 +72,7 @@ export default class ComputerBase extends Phaser.Scene {
       minigame.syncGame(miniGameBarPosition)
       minigame.isActive = true
     }
-    if (!minigame.count < 15 && !imposter) {
+    if (!minigame.done < 15 && !imposter) {
       minigame.bar.setInteractive()
       this.gameState.tetherMiniGame(minigame)
     } else if (imposter) {
@@ -105,12 +105,15 @@ export default class ComputerBase extends Phaser.Scene {
   }
 
   reset() {
-    this.minigames.forEach(game => game.resetGame())
+    this.minigames.forEach(game => {
+      this.gameState.updateMiniGame({ type: game.handle, data: game.barStart })
+      game.resetGame()
+    })
   }
 
   hideMiniGame() {
     if (this.currentGame) {
-      this.scene.get(this.currentGame).bar.disableInteractive()
+      this.scene.get(this.currentGame).bar.disableInteractive({ draggable: false })
       this.scene.get(this.currentGame).isActive = false
     }
     if (this.imp) {
