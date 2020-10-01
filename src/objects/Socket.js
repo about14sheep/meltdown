@@ -19,6 +19,7 @@ export default class Socket extends Phaser.GameObjects.Container {
   constructor(scene) {
     super(scene)
     this.scene = scene
+    // this.socket = io('ws://localhost:3000')
     this.socket = io(`wss://${window.location.host}`)
     this.lobbyId = scene.lobbyID
     this.configure(this.socket)

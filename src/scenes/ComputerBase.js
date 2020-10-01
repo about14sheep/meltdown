@@ -72,7 +72,7 @@ export default class ComputerBase extends Phaser.Scene {
       minigame.syncGame(miniGameBarPosition)
       minigame.isActive = true
     }
-    if (!minigame.count < 15 && !imposter) {
+    if (!minigame.done && !imposter) {
       minigame.bar.setInteractive()
       this.gameState.tetherMiniGame(minigame)
     } else if (imposter) {
@@ -105,7 +105,10 @@ export default class ComputerBase extends Phaser.Scene {
   }
 
   reset() {
-    this.minigames.forEach(game => game.resetGame())
+    this.minigames.forEach(game => {
+      this.gameState.updateMiniGame({ type: game.handle, data: game.barStart })
+      game.resetGame()
+    })
   }
 
   hideMiniGame() {
