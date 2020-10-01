@@ -27,7 +27,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.alert = ''
     this.ws = new Socket(scene)
     this.playersMap = new Map()
-    this.lobbySize = 2
+    this.lobbySize = 8
     this.otherPlayers = scene.physics.add.group()
     this.miniGameBarLastPosition = {}
     this.playerLastUpdate = {}

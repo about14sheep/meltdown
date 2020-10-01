@@ -41,7 +41,7 @@ export default class MiniGameFactory extends Phaser.Scene {
   }
 
   preload() {
-    // this.load.setBaseURL('/static')
+    this.load.setBaseURL('/static')
     this.load.image(this.baseImage.string, this.baseImage.image)
     this.load.image(this.barImage.string, this.barImage.image)
     this.load.image(this.animImage.string, this.animImage.image)
