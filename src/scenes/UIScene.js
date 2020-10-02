@@ -73,6 +73,7 @@ export default class UIScene extends Phaser.Scene {
   }
 
   showPVPButton() {
+    this.killButton.setFrame(1)
     this.killButton.setInteractive()
     this.killButton.setVisible(true)
   }

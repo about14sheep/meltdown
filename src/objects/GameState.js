@@ -27,7 +27,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.alert = ''
     this.ws = new Socket(scene)
     this.playersMap = new Map()
-    this.lobbySize = 8
+    this.lobbySize = 2
     this.otherPlayers = scene.physics.add.group()
     this.miniGameBarLastPosition = {}
     this.playerLastUpdate = {}
@@ -87,7 +87,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   gatherPlayerIds() {
-    return this.otherPlayers.getChildren().map(el => el.ID)
+    return [...this.otherPlayers.getChildren(), this.player].map(el => el.ID)
   }
 
   tetherMiniGame(game) {
@@ -107,6 +107,7 @@ export default class GameState extends Phaser.GameObjects.Container {
       if (otherPlayer.ID === data.player) {
         otherPlayer.setPosition(data.position.x, data.position.y)
         otherPlayer.updateNameTag()
+        otherPlayer.imposter = data.imposter
         otherPlayer.isAlive = data.isAlive
         otherPlayer.setVisible(data.isAlive)
         otherPlayer.setFlipX(data.direction)
@@ -117,6 +118,15 @@ export default class GameState extends Phaser.GameObjects.Container {
         }
       }
     })
+  }
+
+  setImposters(arr) {
+    arr.forEach(el => {
+      if (el === this.player.ID) {
+        this.player.imposter = true
+      }
+    })
+    this.player.reset()
   }
 
   checkImposter() {
@@ -135,17 +145,21 @@ export default class GameState extends Phaser.GameObjects.Container {
     }
   }
 
-  playerInRange(_, { isAlive, ID }) {
-    if (isAlive) {
+  playerInRange(_, { isAlive, ID, imposter }) {
+    if (!this.player.imposter) return
+    if (isAlive && imposter !== true) {
       this.player.targetId = ID
     }
   }
 
   killPlayer() {
     this.otherPlayers.getChildren().forEach(player => {
-      if (player.ID === this.player.targetId) {
-        this.ws.sendMessage({ type: 'PLAYER_KILL', data: player.ID })
-        player.isAlive = false
+      if (player.ID === this.player.targetId && !player.imposter) {
+        const dist = Phaser.Math.Between(player.x, this.player.x, player.y, this.player.y)
+        if (dist < 450) {
+          this.ws.sendMessage({ type: 'PLAYER_KILL', data: player.ID })
+          player.isAlive = false
+        }
       }
     })
     this.player.targetId = null
@@ -180,15 +194,12 @@ export default class GameState extends Phaser.GameObjects.Container {
     if (this.impostersScore === 3 || this.playersScore === 3) {
       this.impostersScore = 0
       this.playersScore = 0
+      this.gameStarted = false
+      this.player.gameOver = true
       this.impostersScore > this.playersScore ? console.log('0 minutes to midnight. BOOM EVENT -- GAME OVER') : console.log('players saved the world. SALUTE EVENT -- GAME OVER')
-      this.otherPlayers.getChildren().forEach(player => {
-        player.gameOver = true
-        player.reset()
-      })
+      this.player.reset()
     } else {
-      this.otherPlayers.getChildren().forEach(player => {
-        player.reset()
-      })
+      this.player.reset()
     }
   }
 

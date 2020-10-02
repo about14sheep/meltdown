@@ -97,7 +97,7 @@ export default class MainScene extends Phaser.Scene {
         this.impGame = this.computer.imposterScreen()
       }
       if (tile) {
-        this.player.imposter ? this.computer.displayMiniGame(this.impGame, this.player.imposter) : this.computer.displayMiniGame(tile)
+        this.player.imposter ? this.computer.displayMiniGame(this.impGame, this.player.imposter, this.player.isAlive) : this.computer.displayMiniGame(tile, this.player.imposter, this.player.isAlive)
       }
     } else {
       this.computer.hideMiniGame()
