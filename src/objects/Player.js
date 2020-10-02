@@ -22,6 +22,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.imposter = false
     this.gameOver = false
     this.isRett = false
+    this.isAlive = true
+    this.targetId = null
+    this.hitbox = this.playerHitBox()
     if (username === 'Dean') {
       this.imposter = true
     }
@@ -41,11 +44,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   update() {
+    this.isAlive ? this.setVisible(true) : this.setVisible(false)
     const keys = this.keys
     let currentAnimKey = 'idle'
     this.body.setVelocityY(0)
     this.body.setVelocityX(0)
-
+    this.updateHitBoxPosition()
     if (keys.A.isDown) {
       this.body.setVelocityX(-this.velocity)
       this.setFlipX(true)
@@ -61,6 +65,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     if (this.body.velocity.x != 0 || this.body.velocity.y != 0) {
+      this.targetId = null
       this.isPlayerUsing = false
       currentAnimKey = 'walking'
     } else if (this.isPlayerUsing) {
@@ -74,8 +79,19 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  playerHitBox() {
+    const hitbox = this.scene.physics.add.sprite(this.x, this.y, 'hitbox').setVisible(false)
+    hitbox.setSize(this.displayWidth * 3, this.displayHeight * 3)
+    return hitbox
+  }
+
+  updateHitBoxPosition() {
+    this.hitbox.setPosition(this.x, this.y)
+  }
+
   updateNameTag() {
     this.nameTag.setPosition(this.x - (this.nameTag.displayWidth / 2), this.y - 40)
+    this.updateHitBoxPosition()
   }
 
   playerUpdater() {
@@ -85,6 +101,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       data: {
         username: this.username,
         player: this.ID,
+        isAlive: this.isAlive,
         position: {
           x: this.x,
           y: this.y

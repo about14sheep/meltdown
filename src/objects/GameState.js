@@ -37,7 +37,7 @@ export default class GameState extends Phaser.GameObjects.Container {
 
   update() {
     this.sendPlayerUpdate()
-
+    this.player.targetId !== null ? this.scene.ui.showPVPButton() : this.scene.ui.hidePVPButton()
     if (((this.otherPlayers.getChildren().length + 1) === this.lobbySize) && ((this.playersReady().length + (this.player.isRett ? 1 : 0)) === (this.otherPlayers.getChildren().length + 1))) {
       if (!this.gameStarted) {
         this.sendStartGame()
@@ -107,6 +107,8 @@ export default class GameState extends Phaser.GameObjects.Container {
       if (otherPlayer.ID === data.player) {
         otherPlayer.setPosition(data.position.x, data.position.y)
         otherPlayer.updateNameTag()
+        otherPlayer.isAlive = data.isAlive
+        otherPlayer.setVisible(data.isAlive)
         otherPlayer.setFlipX(data.direction)
         otherPlayer.isRett = data.ready
         if (otherPlayer.lastAnim !== data.animation) {
@@ -117,8 +119,8 @@ export default class GameState extends Phaser.GameObjects.Container {
     })
   }
 
-  setImposters(imps) {
-    this.player.reset()
+  checkImposter() {
+    return this.player.imposter
   }
 
   addOtherPlayers(data) {
@@ -128,7 +130,30 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.playersMap.set(id, data.position)
     if (id != this.player.ID) {
       const otherPlayer = new Player(this.scene, data.position.x, data.position.y, id, data.username, true)
+      this.scene.physics.add.collider(this.player.hitbox, otherPlayer, this.playerInRange, this.checkImposter, this)
       this.otherPlayers.add(otherPlayer)
+    }
+  }
+
+  playerInRange(_, { isAlive, ID }) {
+    if (isAlive) {
+      this.player.targetId = ID
+    }
+  }
+
+  killPlayer() {
+    this.otherPlayers.getChildren().forEach(player => {
+      if (player.ID === this.player.targetId) {
+        this.ws.sendMessage({ type: 'PLAYER_KILL', data: player.ID })
+        player.isAlive = false
+      }
+    })
+    this.player.targetId = null
+  }
+
+  acceptDeath(data) {
+    if (this.player.ID === data) {
+      this.player.isAlive = false
     }
   }
 
