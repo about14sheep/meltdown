@@ -64,22 +64,22 @@ export default class ComputerBase extends Phaser.Scene {
     this.scene.sendToBack(key)
   }
 
-  displayMiniGame(key, imposter) {
+  displayMiniGame(key, imposter, isAlive) {
     const minigame = this.mountGame(key)
     minigame.bar.disableInteractive()
-    if (!minigame.isActive || imposter) {
+    if (!minigame.isActive || imposter || !isAlive) {
       const miniGameBarPosition = this.gameState.minigames.get(key)
       minigame.syncGame(miniGameBarPosition)
       minigame.isActive = true
     }
-    if (!minigame.done && !imposter) {
+    if (!minigame.done && !imposter && isAlive) {
       minigame.bar.setInteractive()
       this.gameState.tetherMiniGame(minigame)
-    } else if (imposter) {
+    } else if (imposter && isAlive) {
       minigame.bar.disableInteractive()
       this.scene.bringToTop('hack')
       this.hackButton.setVisible(true)
-      this.hackButton.setInteractive()
+      this.hackButton.setInteractive(isAlive)
     }
   }
 

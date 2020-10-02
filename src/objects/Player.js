@@ -25,9 +25,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.isAlive = true
     this.targetId = null
     this.hitbox = this.playerHitBox()
-    if (username === 'Dean') {
-      this.imposter = true
-    }
     this.scene = scene
     this.lobby = scene.lobbyID
     this.game = this.scene.game
@@ -100,6 +97,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       lobby: this.lobby,
       data: {
         username: this.username,
+        imposter: this.imposter,
         player: this.ID,
         isAlive: this.isAlive,
         position: {
@@ -138,8 +136,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   reset() {
     this.setPosition(400, 300)
+    this.isAlive = true
     if (this.gameOver === true) {
       this.imposter = false
+      this.gameOver = false
     }
   }
 

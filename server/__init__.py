@@ -129,8 +129,6 @@ def build_player(msg):
 @socketio.on('join')
 def on_join(data):
     join_room(data['lobby'])
-    lobbyImposters[data['lobby']] = (random.choice(
-        [0, 1, 2, 3]), random.choice([4, 5, 6, 7]))
     msg = {
         'type': 'PLAYER_CONNECTION',
         'lobby': data['lobby'],
@@ -183,11 +181,13 @@ def handle_disconnect():
 @socketio.on('message')
 def handle_message(message, room):
     if message['type'] == 'GAME_START':
-        print(message)
-        imposter_tup = lobbyImposters[message['lobby']]
+        data = message['data']
+        if not message['lobby'] in lobbyImposters:
+            lobbyImposters[message['lobby']] = random.sample(
+                data['players'], 2 if len(data['players']) > 2 else 1)
         msg = {
             'type': 'START_GAME',
-            'data': [imposter_tup[0], imposter_tup[1]]
+            'data': lobbyImposters[message['lobby']]
         }
         send(msg)
     else:
