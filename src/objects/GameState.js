@@ -16,6 +16,7 @@
 
 import Socket from './Socket'
 import Player from './Player'
+import VoteCard from './VoteCard'
 
 export default class GameState extends Phaser.GameObjects.Container {
   constructor(scene) {
@@ -25,6 +26,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.inMeeting = false
     this.minigames = new Map()
     this.gameStarted = false
+    this.chatMessages = []
     this.alert = ''
     this.ws = new Socket(scene)
     this.playersMap = new Map()
@@ -39,7 +41,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   update() {
     this.sendPlayerUpdate()
     if (this.gameStarted) {
-      this.player.emMeeting ? this.scene.ui.hideEmButton() : this.scene.ui.showEmButton()
+      this.player.emMeeting || !this.player.isAlive ? this.scene.ui.hideEmButton() : this.scene.ui.showEmButton()
       this.player.targetId !== null && !this.inMeeting ? this.scene.ui.showPVPButton() : this.scene.ui.hidePVPButton()
     }
     if (((this.otherPlayers.getChildren().length + 1) >= this.lobbySize) && ((this.playersReady().length + (this.player.isRett ? 1 : 0)) === (this.otherPlayers.getChildren().length + 1))) {
@@ -74,13 +76,16 @@ export default class GameState extends Phaser.GameObjects.Container {
     return this.player.imposter ? 'Boom this lab by any means!' : 'Find the Imposters and save this lab!'
   }
 
+  closeMeeting() {
+    
+  }
+
   updateMiniGame({ type, data }) {
     this.minigames.set(type, { x: data.x, y: data.y })
   }
 
-  joinMeeting(data) {
+  joinMeeting() {
     this.inMeeting = true
-    console.log('joining meeting')
     this.player.zeroSpeed()
   }
 
@@ -98,6 +103,14 @@ export default class GameState extends Phaser.GameObjects.Container {
       }
     }
     this.ws.sendMessage(msg)
+  }
+
+  sendChatMessage(msg) {
+    this.ws.sendMessage({ type: 'PLAYER_CHAT', data: { username: msg.player, message: msg.text } })
+  }
+
+  addChatMessage(data) {
+    this.chatMessages.unshift(data)
   }
 
   gatherPlayerIds() {

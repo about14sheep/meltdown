@@ -16,10 +16,10 @@
 
 import Player from '../objects/Player'
 import GameState from '../objects/GameState'
+
 import { sliderGame, sliderGameKey, upSliderGameKey, upSliderGame, bottomGame, bottomGameKey, downloadGame, downloadGameKey, employeeGame, employeeGameKey, placeGame, placeGameKey, serverGameKey, serverGame, trashGame, trashGameKey } from '../actions/MiniGames'
 
 import ScientistSpritesheet from '../assets/scientist_spritesheet.png'
-import Grass from '../assets/grass.png'
 import FactoryTiles from '../assets/factory_tileset.png'
 import layout from '../assets/meltdown_start_room.json'
 
@@ -33,7 +33,6 @@ export default class MainScene extends Phaser.Scene {
 
   preload() {
     this.load.setBaseURL('/static')
-    this.load.image('grass', Grass)
     this.load.spritesheet('tiles', FactoryTiles, {
       frameWidth: 16,
       frameHeight: 16
@@ -47,8 +46,6 @@ export default class MainScene extends Phaser.Scene {
   }
 
   create() {
-    this.grass = this.add.image(400, 300, 'grass')
-    this.grass.setScale(2.5)
     this.map = this.make.tilemap({ key: 'map' })
     this.impGame = null
     const tileset = this.map.addTilesetImage("factory_tileset", "tiles")
@@ -81,29 +78,34 @@ export default class MainScene extends Phaser.Scene {
 
   update() {
     if (!this.gameState.inMeeting) {
-      this.player.update()
+      this.computer.hideChat()
     }
     this.gameState.update()
-    if (this.computer.calculateGame() === 'imposters') {
-      this.gameState.impostersScore++
-      console.log(`imposters won; ${this.gameState.minutesToMidnight()} minutes to midnight`)
-      this.reset()
-    } else if (this.computer.calculateGame() === 'scientists') {
-      this.gameState.playersScore++
-      console.log(`scientists won; ${this.gameState.minutesToMidnight()} minutes to midnight`)
-      this.reset()
-    }
-    if (this.player.isPlayerUsing) {
-      const tile = this.getTile(this.player.x, this.player.y)
-      if (this.player.imposter && !this.impGame) {
-        this.impGame = this.computer.imposterScreen()
-      }
-      if (tile) {
-        this.player.imposter ? this.computer.displayMiniGame(this.impGame, this.player.imposter, this.player.isAlive) : this.computer.displayMiniGame(tile, this.player.imposter, this.player.isAlive)
-      }
+    if (this.gameState.inMeeting) {
+      this.computer.showChat()
     } else {
-      this.computer.hideMiniGame()
-      this.impGame = null
+      this.player.update()
+      if (this.computer.calculateGame() === 'imposters') {
+        this.gameState.impostersScore++
+        console.log(`imposters won; ${this.gameState.minutesToMidnight()} minutes to midnight`)
+        this.reset()
+      } else if (this.computer.calculateGame() === 'scientists') {
+        this.gameState.playersScore++
+        console.log(`scientists won; ${this.gameState.minutesToMidnight()} minutes to midnight`)
+        this.reset()
+      }
+      if (this.player.isPlayerUsing) {
+        const tile = this.getTile(this.player.x, this.player.y)
+        if (this.player.imposter && !this.impGame) {
+          this.impGame = this.computer.imposterScreen()
+        }
+        if (tile) {
+          this.player.imposter ? this.computer.displayMiniGame(this.impGame, this.player.imposter, this.player.isAlive) : this.computer.displayMiniGame(tile, this.player.imposter, this.player.isAlive)
+        }
+      } else {
+        this.computer.hideMiniGame()
+        this.impGame = null
+      }
     }
 
   }

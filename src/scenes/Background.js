@@ -14,25 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-import 'phaser'
+import Grass from '../assets/grass.png'
 
-import UIScene from './scenes/UIScene'
-import ComputerBase from './scenes/ComputerBase'
-import Login from './scenes/Login'
-import Background from './scenes/Background'
+export default class Background extends Phaser.Scene {
+  constructor() {
+    super({ key: 'background', active: true })
+  }
 
-const config = {
-  type: Phaser.AUTO,
-  width: 800,
-  height: 600,
-  physics: {
-    default: 'arcade',
-  },
-  parent: 'menus-overlay',
-  dom: {
-    createContainer: true
-  },
-  scene: [UIScene, Login, Background, ComputerBase]
+  preload() {
+    this.load.setBaseURL('/static')
+    this.load.image('grass', Grass)
+  }
+
+  create() {
+    this.grass = this.add.image(400, 300, 'grass')
+    this.grass.setScale(2.5)
+  }
 }
-
-export const game = new Phaser.Game(config)

@@ -16,6 +16,7 @@
 
 import ComputerBaseImage from '../assets/computer_screen_base.png'
 import HackIcon from '../assets/hack_icon_spritesheet.png'
+import GameChat from '../objects/GameChat'
 export default class ComputerBase extends Phaser.Scene {
   constructor() {
     super({ key: 'computer', active: true })
@@ -79,7 +80,7 @@ export default class ComputerBase extends Phaser.Scene {
       minigame.bar.disableInteractive()
       this.scene.bringToTop('hack')
       this.hackButton.setVisible(true)
-      this.hackButton.setInteractive(isAlive)
+      this.hackButton.setInteractive(true)
     }
   }
 
@@ -88,6 +89,24 @@ export default class ComputerBase extends Phaser.Scene {
     this.currentGame = key
     this.scene.moveAbove(this.baseKey, key)
     return this.scene.get(key)
+  }
+
+  showChat() {
+    if (!this.gameChat) {
+      this.gameChat = new GameChat(this, 500, 450)
+    }
+    this.scene.bringToTop(this.baseKey)
+    this.gameChat.updater()
+  }
+
+  destroyGameChat() {
+    this.gameChat.destroy()
+  }
+
+  hideChat() {
+    if (this.gameChat) {
+      this.gameState.ws.sendMessage({ type: 'CLOSE_MEETING' })
+    }
   }
 
   calculateGame() {

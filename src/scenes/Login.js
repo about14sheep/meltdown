@@ -82,7 +82,6 @@ export default class Login extends Phaser.Scene {
   }
 
   createUser(username, password) {
-    console.log(username, password)
     this.user = JSON.stringify(signup(username, password))
     this.success = true
   }

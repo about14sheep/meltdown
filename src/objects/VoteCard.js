@@ -14,25 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-import 'phaser'
+export default class VoteCard extends Phaser.GameObjects.DOMElement {
+  constructor(scene, x, y, players) {
+    super(scene, x, y)
+    this.scene = scene
+    this.votes = this.configurePlayers(players)
+    this.createButtons(players)
+  }
 
-import UIScene from './scenes/UIScene'
-import ComputerBase from './scenes/ComputerBase'
-import Login from './scenes/Login'
-import Background from './scenes/Background'
+  configurePlayers(players) {
+    const res = {}
+    players.forEach(player => {
+      res[player] = null
+    })
+    return res
+  }
 
-const config = {
-  type: Phaser.AUTO,
-  width: 800,
-  height: 600,
-  physics: {
-    default: 'arcade',
-  },
-  parent: 'menus-overlay',
-  dom: {
-    createContainer: true
-  },
-  scene: [UIScene, Login, Background, ComputerBase]
+  createButtons(players) {
+    let res = ''
+    this.buttons = players.forEach((el, i) => {
+      res += `<button id=${el.username}>${el.username}</button>`
+    })
+    this.createFromHTML(res)
+  }
+
+  setVote(player, vote) {
+    this.votes[player] = vote
+  }
+
+  tallyVote() {
+
+  }
 }
-
-export const game = new Phaser.Game(config)
