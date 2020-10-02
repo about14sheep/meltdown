@@ -24,6 +24,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.isRett = false
     this.isAlive = true
     this.targetId = null
+    this.emMeeting = false
     this.hitbox = this.playerHitBox()
     this.scene = scene
     this.lobby = scene.lobbyID
@@ -44,8 +45,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.isAlive ? this.setVisible(true) : this.setVisible(false)
     const keys = this.keys
     let currentAnimKey = 'idle'
-    this.body.setVelocityY(0)
-    this.body.setVelocityX(0)
+    this.zeroSpeed()
     this.updateHitBoxPosition()
     if (keys.A.isDown) {
       this.body.setVelocityX(-this.velocity)
@@ -76,6 +76,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  zeroSpeed() {
+    this.body.setVelocityY(0)
+    this.body.setVelocityX(0)
+  }
+
   playerHitBox() {
     const hitbox = this.scene.physics.add.sprite(this.x, this.y, 'hitbox').setVisible(false)
     hitbox.setSize(this.displayWidth * 3, this.displayHeight * 3)
@@ -89,6 +94,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   updateNameTag() {
     this.nameTag.setPosition(this.x - (this.nameTag.displayWidth / 2), this.y - 40)
     this.updateHitBoxPosition()
+  }
+
+  toggleEmMeeting() {
+    this.emMeeting = !this.emMeeting
   }
 
   playerUpdater() {
@@ -136,9 +145,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   reset() {
     this.setPosition(400, 300)
-    this.isAlive = true
     if (this.gameOver === true) {
+      this.isAlive = true
       this.imposter = false
+      this.toggleEmMeeting()
       this.gameOver = false
     }
   }

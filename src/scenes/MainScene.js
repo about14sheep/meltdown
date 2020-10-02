@@ -80,7 +80,9 @@ export default class MainScene extends Phaser.Scene {
   }
 
   update() {
-    this.player.update()
+    if (!this.gameState.inMeeting) {
+      this.player.update()
+    }
     this.gameState.update()
     if (this.computer.calculateGame() === 'imposters') {
       this.gameState.impostersScore++
@@ -109,7 +111,6 @@ export default class MainScene extends Phaser.Scene {
   reset() {
     this.computer.reset()
     this.gameState.reset()
-    this.player.reset()
   }
 
   checkForTiles(tile, value) {

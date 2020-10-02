@@ -68,6 +68,9 @@ export default class Socket extends Phaser.GameObjects.Container {
       case 'PLAYER_KILL':
         this.scene.gameState.acceptDeath(msg.data)
         break
+      case 'PLAYER_MEETING':
+        this.scene.gameState.joinMeeting(msg.data)
+        break
       default:
         this.scene.gameState.updateMiniGame(msg)
     }

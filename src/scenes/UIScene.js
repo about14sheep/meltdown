@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import ReadyButton from '../assets/ready_button_spritesheet.png'
+import EmergencyButton from '../assets/emergency_button.png'
 import KillButton from '../assets/kill_button_spritesheet.png'
 import UIAlertTicker from '../objects/UIAlertTicker'
 
@@ -26,6 +27,7 @@ export default class UIScene extends Phaser.Scene {
 
   preload() {
     this.load.setBaseURL('/static')
+    this.load.image('emButton', EmergencyButton)
     this.load.spritesheet('killButton', KillButton, {
       frameWidth: 35,
       frameHeight: 21
@@ -41,11 +43,17 @@ export default class UIScene extends Phaser.Scene {
   create() {
     this.readyButton = this.add.sprite(400, 500, 'readyButton').setInteractive()
     this.killButton = this.add.sprite(700, 500, 'killButton')
+    this.emButton = this.add.sprite(100, 500, 'emButton')
+    this.emButton.setScale(2)
+    this.emButton.setVisible(false)
     this.killButton.setScale(3)
     this.killButton.setVisible(false)
     this.killButton.setFrame(1)
     this.ticker = new UIAlertTicker(this)
     this.readyButton.setScale(3)
+    this.emButton.on('pointerdown', _ => {
+      this.gameState.callMeeting()
+    })
     this.killButton.on('pointerdown', _ => {
       this.killButton.setFrame(0)
       this.gameState.killPlayer()
@@ -70,6 +78,16 @@ export default class UIScene extends Phaser.Scene {
 
   setGameState(state) {
     this.gameState = state
+  }
+
+  showEmButton() {
+    this.emButton.setInteractive()
+    this.emButton.setVisible(true)
+  }
+
+  hideEmButton() {
+    this.emButton.disableInteractive()
+    this.emButton.setVisible(false)
   }
 
   showPVPButton() {

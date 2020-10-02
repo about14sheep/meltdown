@@ -22,6 +22,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     super(scene)
     this.scene = scene
     this.player = scene.player
+    this.inMeeting = false
     this.minigames = new Map()
     this.gameStarted = false
     this.alert = ''
@@ -37,7 +38,10 @@ export default class GameState extends Phaser.GameObjects.Container {
 
   update() {
     this.sendPlayerUpdate()
-    this.player.targetId !== null ? this.scene.ui.showPVPButton() : this.scene.ui.hidePVPButton()
+    if (this.gameStarted) {
+      this.player.emMeeting ? this.scene.ui.hideEmButton() : this.scene.ui.showEmButton()
+      this.player.targetId !== null && !this.inMeeting ? this.scene.ui.showPVPButton() : this.scene.ui.hidePVPButton()
+    }
     if (((this.otherPlayers.getChildren().length + 1) >= this.lobbySize) && ((this.playersReady().length + (this.player.isRett ? 1 : 0)) === (this.otherPlayers.getChildren().length + 1))) {
       if (!this.gameStarted) {
         this.sendStartGame()
@@ -74,6 +78,16 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.minigames.set(type, { x: data.x, y: data.y })
   }
 
+  joinMeeting(data) {
+    this.inMeeting = true
+    console.log('joining meeting')
+    this.player.zeroSpeed()
+  }
+
+  callMeeting() {
+    this.player.toggleEmMeeting()
+    this.ws.sendMessage({ type: 'PLAYER_MEETING', data: this.player.ID })
+  }
 
   sendStartGame() {
     const msg = {
@@ -124,6 +138,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     arr.forEach(el => {
       if (el === this.player.ID) {
         this.player.imposter = true
+        this.player.toggleEmMeeting()
       }
     })
     this.player.reset()
