@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import ReadyButton from '../assets/ready_button_spritesheet.png'
+import KillButton from '../assets/kill_button_spritesheet.png'
 import UIAlertTicker from '../objects/UIAlertTicker'
 
 export default class UIScene extends Phaser.Scene {
@@ -25,16 +26,30 @@ export default class UIScene extends Phaser.Scene {
 
   preload() {
     this.load.setBaseURL('/static')
+    this.load.spritesheet('killButton', KillButton, {
+      frameWidth: 35,
+      frameHeight: 21
+    })
+
     this.load.spritesheet('readyButton', ReadyButton, {
       frameWidth: 35,
       frameHeight: 21
     })
+
   }
 
   create() {
     this.readyButton = this.add.sprite(400, 500, 'readyButton').setInteractive()
+    this.killButton = this.add.sprite(700, 500, 'killButton')
+    this.killButton.setScale(3)
+    this.killButton.setVisible(false)
+    this.killButton.setFrame(1)
     this.ticker = new UIAlertTicker(this)
     this.readyButton.setScale(3)
+    this.killButton.on('pointerdown', _ => {
+      this.killButton.setFrame(0)
+      this.gameState.killPlayer()
+    })
     this.readyButton.on('pointerdown', _ => {
       this.gameState.readyPlayerOne(!this.readyChecked)
       this.readyChecked = !this.readyChecked
@@ -55,6 +70,16 @@ export default class UIScene extends Phaser.Scene {
 
   setGameState(state) {
     this.gameState = state
+  }
+
+  showPVPButton() {
+    this.killButton.setInteractive()
+    this.killButton.setVisible(true)
+  }
+
+  hidePVPButton() {
+    this.killButton.disableInteractive()
+    this.killButton.setVisible(false)
   }
 
   startGame() {

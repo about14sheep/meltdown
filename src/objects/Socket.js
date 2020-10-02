@@ -65,6 +65,9 @@ export default class Socket extends Phaser.GameObjects.Container {
       case 'START_GAME':
         this.scene.gameState.setImposters(msg.data)
         break
+      case 'PLAYER_KILL':
+        this.scene.gameState.acceptDeath(msg.data)
+        break
       default:
         this.scene.gameState.updateMiniGame(msg)
     }
