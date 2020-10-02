@@ -30,9 +30,6 @@ from flask_jwt_extended import (
     jwt_required, create_access_token, get_jwt_identity, JWTManager
 )
 
-REDIS_URL = os.environ.get('REDIS_URL')
-REDIS_CHAN = 'game'
-
 app = Flask(__name__)
 app.config.from_object(Config)
 logging.basicConfig(level=logging.DEBUG)

@@ -41,7 +41,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   update() {
     this.sendPlayerUpdate()
     if (this.gameStarted) {
-      this.player.emMeeting || !this.player.isAlive ? this.scene.ui.hideEmButton() : this.scene.ui.showEmButton()
+      // this.player.emMeeting || !this.player.isAlive ? this.scene.ui.hideEmButton() : this.scene.ui.showEmButton()
       this.player.targetId !== null && !this.inMeeting ? this.scene.ui.showPVPButton() : this.scene.ui.hidePVPButton()
     }
     if (((this.otherPlayers.getChildren().length + 1) >= this.lobbySize) && ((this.playersReady().length + (this.player.isRett ? 1 : 0)) === (this.otherPlayers.getChildren().length + 1))) {
@@ -77,7 +77,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   closeMeeting() {
-    
+
   }
 
   updateMiniGame({ type, data }) {
