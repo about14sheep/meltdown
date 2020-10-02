@@ -59,8 +59,8 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   alertMessage() {
-    if (this.otherPlayers.getChildren().length + 1 === this.lobbySize) {
-      return `(${this.playersReady().length + (this.player.isRett ? 1 : 0)} / 8) Waiting for players to ready..`
+    if (this.otherPlayers.getChildren().length + 1 >= this.lobbySize) {
+      return `(${this.playersReady().length + (this.player.isRett ? 1 : 0)} / ${this.otherPlayers.getChildren().length + 1}) Waiting for players to ready..`
     } else {
       return `(${this.otherPlayers.getChildren().length + 1} / 8) Waiting for players to join..`
     }
@@ -155,14 +155,18 @@ export default class GameState extends Phaser.GameObjects.Container {
   killPlayer() {
     this.otherPlayers.getChildren().forEach(player => {
       if (player.ID === this.player.targetId && !player.imposter) {
-        const dist = Phaser.Math.Between(player.x, this.player.x, player.y, this.player.y)
-        if (dist < 450) {
+        const dist = this.checkDistance(this.player, player)
+        if (dist < 120) {
           this.ws.sendMessage({ type: 'PLAYER_KILL', data: player.ID })
           player.isAlive = false
         }
       }
     })
     this.player.targetId = null
+  }
+
+  checkDistance(player1, player2) {
+    return Math.sqrt(Math.pow((player1.x - player2.x), 2) + Math.pow((player1.y - player2.y), 2))
   }
 
   acceptDeath(data) {
