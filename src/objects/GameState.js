@@ -38,7 +38,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   update() {
     this.sendPlayerUpdate()
     this.player.targetId !== null ? this.scene.ui.showPVPButton() : this.scene.ui.hidePVPButton()
-    if (((this.otherPlayers.getChildren().length + 1) === this.lobbySize) && ((this.playersReady().length + (this.player.isRett ? 1 : 0)) === (this.otherPlayers.getChildren().length + 1))) {
+    if (((this.otherPlayers.getChildren().length + 1) >= this.lobbySize) && ((this.playersReady().length + (this.player.isRett ? 1 : 0)) === (this.otherPlayers.getChildren().length + 1))) {
       if (!this.gameStarted) {
         this.sendStartGame()
         this.gameStarted = true
