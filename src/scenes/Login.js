@@ -17,73 +17,52 @@
 import LoginForm from '../objects/LoginForm'
 import LobbyList from '../objects/LobbyList'
 import MainScene from './MainScene'
-import SignupForm from '../objects/SignupForm'
 
 import login from '../actions/LoginAPI'
-import signup from '../actions/SignupAPI'
 
 export default class Login extends Phaser.Scene {
   constructor() {
     super({ key: 'login', active: true })
-    this.success = false
     this.lobbyId = null
   }
 
   preload() {
-    this.token = window.localStorage.getItem('meltdown/auth/token')
     this.user = window.localStorage.getItem('meltdown/auth/user')
   }
 
   create() {
-    if (!this.token || !this.user) {
-      this.loginForm = new LoginForm(this, 400, 300)
-    } else {
-      this.success = true
-    }
+    this.user ? this.loadLobbyList() : this.loadLoginForm()
   }
 
   update() {
-    if (this.success) {
-      if (this.loginForm) {
-        this.loginForm.destroy()
-      }
-      if (this.signupForm) {
-        this.signupForm.destroy()
-      }
-    }
-    if (this.success && !this.lobbyId && !this.lobbyList) {
-      this.lobbyList = new LobbyList(this, 400, 300, this.user)
-    } else if (this.success && this.lobbyId) {
-      this.success = false
+    if (this.lobbyId) {
       this.lobbyList.destroy()
       this.loadGameScene()
+      this.lobbyId = null
     }
-  }
-
-  showLogin() {
-    this.signupForm.destroy()
-    this.loginForm = new LoginForm(this, 400, 300)
-  }
-
-  showSignup() {
-    this.loginForm.destroy()
-    this.signupForm = new SignupForm(this, 400, 300)
   }
 
   loadGameScene() {
+    console.log(this.user)
     const user = JSON.parse(this.user)
     const main = new MainScene({ key: 'main', active: true }, user, this.lobbyId)
     this.game.scene.add('main', main)
   }
 
-  loginUser(username, password) {
-    this.user = JSON.stringify(login(username, password))
-    this.success = true
+  loadLoginForm() {
+    this.loginForm = new LoginForm(this, 400, 300)
   }
 
-  createUser(username, password) {
-    this.user = JSON.stringify(signup(username, password))
-    this.success = true
+  loadLobbyList() {
+    if (this.loginForm) {
+      this.loginForm.destroy()
+    }
+    this.lobbyList = new LobbyList(this, 400, 300, this.user)
+  }
+
+  loginUser(username) {
+    this.user = JSON.stringify(login(username))
+    this.loadLobbyList()
   }
 
 }

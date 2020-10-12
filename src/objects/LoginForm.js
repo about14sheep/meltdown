@@ -18,17 +18,10 @@ export default class LoginForm extends Phaser.GameObjects.DOMElement {
   constructor(scene, x, y) {
     super(scene, x, y)
     this.scene = scene
-    this.createFromHTML('<div style="display: flex; flex-direction: column; align-items: center; width: 320px; height: 400px; font: 48px Arial"><p style="text-align: center;">Meltdown \n Atomic City</p><input type="text" placeholder="username" id="username" name="username"><input type="password" placeholder="password" id="password" name="password"><div><input type="submit" id="submit" value="Login"><button id="goToSignup" value="Sign-Up">Sign-Up</button></div></div>')
+    this.createFromHTML('<div style="display: flex; flex-direction: column; align-items: center; width: 320px; height: 400px; font: 48px Arial"><p style="text-align: center;">Meltdown \n Atomic City</p><input type="text" placeholder="username" id="username" name="username"><div><input type="submit" id="submit" value="Play"></div></div>')
     this.usernameInput = this.getChildByID('username')
-    this.passwordInput = this.getChildByID('password')
     this.configureLoginEvent()
-    this.configureSignupEvent()
     scene.add.existing(this)
-  }
-
-  configureSignupEvent() {
-    const signup = this.getChildByID('goToSignup')
-    signup.addEventListener('click', this.signupHandler.bind(this))
   }
 
   configureLoginEvent() {
@@ -36,12 +29,8 @@ export default class LoginForm extends Phaser.GameObjects.DOMElement {
     login.addEventListener('click', this.loginHandler.bind(this))
   }
 
-  signupHandler() {
-    this.scene.showSignup()
-  }
-
   loginHandler() {
-    this.scene.loginUser(this.usernameInput.value, this.passwordInput.value)
+    this.scene.loginUser(this.usernameInput.value)
   }
 
 }

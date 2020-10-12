@@ -15,17 +15,16 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 
-export default async function login(username, password) {
+export default async function login(username) {
   const res = await fetch('/api/session', {
-    method: 'PUT',
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ username, password })
+    body: JSON.stringify({ username })
   })
   if (res.ok) {
-    const { token, user } = await res.json()
-    window.localStorage.setItem('meltdown/auth/token', token)
+    const { user } = await res.json()
     window.localStorage.setItem('meltdown/auth/user', JSON.stringify(user))
     return user
   } else {

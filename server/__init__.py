@@ -34,9 +34,9 @@ app = Flask(__name__)
 app.config.from_object(Config)
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger('flask_cors').level = logging.DEBUG
-# socketio = SocketIO(app, cors_allowed_origins='http://localhost:8080')
-socketio = SocketIO(
-    app, cors_allowed_origins='https://meltdowntts.herokuapp.com')
+socketio = SocketIO(app, cors_allowed_origins='http://localhost:8080')
+# socketio = SocketIO(
+#     app, cors_allowed_origins='https://meltdowntts.herokuapp.com')
 db.init_app(app)
 login_manager = LoginManager(app)
 jwt = JWTManager(app)
@@ -55,45 +55,22 @@ def index():
     return app.send_static_file("index.html")
 
 
-@app.route('/api/session', methods=['PUT', 'POST', 'DELETE'])
+@app.route('/api/session', methods=['POST'])
 def auth():
     if not request.is_json:
-        return jsonify({'msg': 'Missing JSON in request'}), 400
-
-    if request.method == 'DELETE':
-        id = request.json.get('userId', None)
-        user = User.query.filter(User.id == id).first()
-        user.session_token = None
-        db.session.add(user)
-        db.session.commit()
-        return jsonify({'msg': 'Session token removed'}), 200
-
+        return {'msg': 'Missing JSON in request'}, 400
     username = request.json.get('username', None)
-    password = request.json.get('password', None)
-
     if not username:
-        return jsonify({"msg": "Missing username"}), 400
-    if not password:
-        return jsonify({"msg": "Missing password"}), 400
-
-    if request.method == 'PUT':
-        user = User.query.filter(User.username == username).first()
-        print(user.password == password)
-        print(user.check_password('password'))
-        if not user or not user.check_password(password):
-            return jsonify({"msg": "Password or Username dont match"}), 401
-    elif request.method == 'POST':
+        return {"msg": "Enter a name"}, 400
+    prevUser = User.query.filter_by(username=username).first()
+    if request.method == 'POST':
+        if prevUser:
+            return {'user': prevUser.to_dict()}, 200
         username = request.json.get('username', None)
-        if not username:
-            return jsonify({"msg": "Missing username"}), 400
         user = User(username=username)
-        user.password = password
-    access_token = create_access_token(identity=username)
-    user.session_token = access_token
-    login_user(user)
     db.session.add(user)
     db.session.commit()
-    return jsonify({'user': user.to_dict(), 'token': access_token}), 200
+    return {'user': user.to_dict()}, 200
 
 
 @app.route('/api/lobbies')

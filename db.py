@@ -26,22 +26,12 @@ with app.app_context():
     db.drop_all()
     db.create_all()
 
-    ian = User(username='Ian',
-               password='password')
-    javier = User(username='Javier',
-                  password='password')
-    dean = User(username='Dean',
-                password='password')
-
     lobby1 = Lobby(name='West Wing B Reactor', player_max=8)
     lobby2 = Lobby(name='Fifth Floor Laboratories', player_max=8)
     lobby3 = Lobby(name='Cafeteria Waiting Room', player_max=8)
     lobby4 = Lobby(name='Atomic City Freeway Truck Stop', player_max=8)
     lobby5 = Lobby(name='Factory Floor', player_max=8)
 
-    db.session.add(ian)
-    db.session.add(javier)
-    db.session.add(dean)
     db.session.add(lobby1)
     db.session.add(lobby2)
     db.session.add(lobby3)
