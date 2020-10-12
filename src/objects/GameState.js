@@ -17,6 +17,7 @@
 import Socket from './Socket'
 import Player from './Player'
 import VoteCard from './VoteCard'
+import { downloadGameKey } from '../actions/MiniGames'
 
 export default class GameState extends Phaser.GameObjects.Container {
   constructor(scene) {
@@ -42,7 +43,6 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.sendPlayerUpdate()
     if (this.gameStarted) {
       // this.player.emMeeting || !this.player.isAlive ? this.scene.ui.hideEmButton() : this.scene.ui.showEmButton()
-      this.player.targetId ? this.scene.ui.showPVPButton() : this.scene.ui.hidePVPButton()
     }
     if (((this.otherPlayers.getChildren().length + 1) >= this.lobbySize) && ((this.playersReady().length + (this.player.isRett ? 1 : 0)) === (this.otherPlayers.getChildren().length + 1))) {
       if (!this.gameStarted) {
@@ -136,9 +136,16 @@ export default class GameState extends Phaser.GameObjects.Container {
         otherPlayer.updateNameTag()
         otherPlayer.imposter = data.imposter
         otherPlayer.isAlive = data.isAlive
-        otherPlayer.setVisible(data.isAlive)
         otherPlayer.setFlipX(data.direction)
         otherPlayer.isRett = data.ready
+        if (this.player.isAlive) {
+          otherPlayer.setVisible(data.isAlive)
+          otherPlayer.nameTag.setVisible(data.isAlive)
+        } else if (!data.isAlive) {
+          otherPlayer.setVisible(true)
+          otherPlayer.nameTag.setVisible(true)
+          otherPlayer.setAlpha(0.5)
+        }
         if (otherPlayer.lastAnim !== data.animation) {
           otherPlayer.lastAnim = data.animation
           otherPlayer.play(data.animation, true)
@@ -176,20 +183,29 @@ export default class GameState extends Phaser.GameObjects.Container {
   playerInRange(_, player) {
     if (!this.player.imposter) return
     if (player.isAlive && player.imposter !== true) {
-      this.player.targetId = player
+      this.player.setTarget(player)
     }
   }
 
   killPlayer() {
-    const deadMan = this.otherPlayers.getChildren().find(el => el.ID === this.player.targetId.ID)
+    const deadMan = this.otherPlayers.getChildren().find(el => el.ID === this.player.target.ID)
     deadMan.isAlive = false
-    this.player.targetId = null
+    this.player.target = null
     this.ws.sendMessage({ type: 'PLAYER_KILL', data: deadMan.ID })
   }
 
   acceptDeath(data) {
     if (this.player.ID === data) {
       this.player.isAlive = false
+    } else {
+      const deadMan = this.otherPlayers.getChildren().find(el => el.ID === data)
+      deadMan.isAlive = false
+      if (this.player.isAlive) {
+        deadMan.nameTag.setVisible(false)
+        deadMan.setVisible(false)
+      } else {
+        deadMan.setAlpha(0.5)
+      }
     }
   }
 

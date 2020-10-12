@@ -94,6 +94,7 @@ export default class MainScene extends Phaser.Scene {
         console.log(`scientists won; ${this.gameState.minutesToMidnight()} minutes to midnight`)
         this.reset()
       }
+      this.player.target ? this.ui.showPVPButton() : this.ui.hidePVPButton()
       if (this.player.isPlayerUsing) {
         const tile = this.getTile(this.player.x, this.player.y)
         if (this.player.imposter && !this.impGame) {

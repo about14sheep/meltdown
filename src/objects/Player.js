@@ -23,7 +23,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.gameOver = false
     this.isRett = false
     this.isAlive = true
-    this.targetId = null
+    this.target = null
     this.emMeeting = false
     this.hitbox = this.playerHitBox()
     this.scene = scene
@@ -42,14 +42,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   update() {
-    this.isAlive ? this.setVisible(true) : this.setVisible(false)
+    this.isAlive ? this.setAlpha(1) : this.setAlpha(0.5)
     const keys = this.keys
     let currentAnimKey = 'idle'
     this.zeroSpeed()
     this.updateHitBoxPosition()
 
-    if (this.targetId && this.checkDistance(this.targetId) > 120) {
-      this.targetId = null
+    if (this.target && this.targetInRange()) {
+      this.target = null
     }
 
     if (keys.A.isDown) {
@@ -67,7 +67,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     if (this.body.velocity.x != 0 || this.body.velocity.y != 0) {
-      this.targetId = null
+      this.target = null
       this.isPlayerUsing = false
       currentAnimKey = 'walking'
     } else if (this.isPlayerUsing) {
@@ -79,6 +79,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       this.lastAnim = currentAnimKey
       this.anims.play(currentAnimKey, true)
     }
+  }
+
+  setTarget(player) {
+    this.target = player
   }
 
   zeroSpeed() {
@@ -148,8 +152,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     })
   }
 
-  checkDistance(player) {
-    return Math.sqrt(Math.pow((this.x - player.x), 2) + Math.pow((this.y - player.y), 2))
+  targetInRange() {
+    return Math.sqrt(Math.pow((this.x - this.target.x), 2) + Math.pow((this.y - this.target.y), 2)) > 120
   }
 
   reset() {
