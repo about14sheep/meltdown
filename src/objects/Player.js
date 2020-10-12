@@ -47,6 +47,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     let currentAnimKey = 'idle'
     this.zeroSpeed()
     this.updateHitBoxPosition()
+
+    if (this.targetId && this.checkDistance(this.targetId) > 120) {
+      this.targetId = null
+    }
+
     if (keys.A.isDown) {
       this.body.setVelocityX(-this.velocity)
       this.setFlipX(true)
@@ -141,6 +146,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       frames: [{ key: 'scientist', frame: 1 }],
       frameRate: 1,
     })
+  }
+
+  checkDistance(player) {
+    return Math.sqrt(Math.pow((this.x - player.x), 2) + Math.pow((this.y - player.y), 2))
   }
 
   reset() {

@@ -42,7 +42,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.sendPlayerUpdate()
     if (this.gameStarted) {
       // this.player.emMeeting || !this.player.isAlive ? this.scene.ui.hideEmButton() : this.scene.ui.showEmButton()
-      this.player.targetId !== null && !this.inMeeting ? this.scene.ui.showPVPButton() : this.scene.ui.hidePVPButton()
+      this.player.targetId ? this.scene.ui.showPVPButton() : this.scene.ui.hidePVPButton()
     }
     if (((this.otherPlayers.getChildren().length + 1) >= this.lobbySize) && ((this.playersReady().length + (this.player.isRett ? 1 : 0)) === (this.otherPlayers.getChildren().length + 1))) {
       if (!this.gameStarted) {
@@ -173,28 +173,18 @@ export default class GameState extends Phaser.GameObjects.Container {
     }
   }
 
-  playerInRange(_, { isAlive, ID, imposter }) {
+  playerInRange(_, player) {
     if (!this.player.imposter) return
-    if (isAlive && imposter !== true) {
-      this.player.targetId = ID
+    if (player.isAlive && player.imposter !== true) {
+      this.player.targetId = player
     }
   }
 
   killPlayer() {
-    this.otherPlayers.getChildren().forEach(player => {
-      if (player.ID === this.player.targetId && !player.imposter) {
-        const dist = this.checkDistance(this.player, player)
-        if (dist < 120) {
-          this.ws.sendMessage({ type: 'PLAYER_KILL', data: player.ID })
-          player.isAlive = false
-        }
-      }
-    })
+    const deadMan = this.otherPlayers.getChildren().find(el => el.ID === this.player.targetId.ID)
+    deadMan.isAlive = false
     this.player.targetId = null
-  }
-
-  checkDistance(player1, player2) {
-    return Math.sqrt(Math.pow((player1.x - player2.x), 2) + Math.pow((player1.y - player2.y), 2))
+    this.ws.sendMessage({ type: 'PLAYER_KILL', data: deadMan.ID })
   }
 
   acceptDeath(data) {
