@@ -18,7 +18,7 @@ export default class LoginForm extends Phaser.GameObjects.DOMElement {
   constructor(scene, x, y) {
     super(scene, x, y)
     this.scene = scene
-    this.createFromHTML('<div style="display: flex; flex-direction: column; align-items: center; width: 320px; height: 400px; font: 48px Arial"><p style="text-align: center;">Meltdown \n Atomic City</p><input type="text" placeholder="username" id="username" name="username"><div><input type="submit" id="submit" value="Play"></div></div>')
+    this.createFromHTML('<div style="display: flex; flex-direction: column; align-items: center; width: 320px; height: 400px; font: 48px Arial"><p style="text-align: center;">Meltdown \n Atomic City</p><input type="text" placeholder="username" id="username" name="username"><div><input type="submit" id="submit" value="Play Meltdown"></div></div>')
     this.usernameInput = this.getChildByID('username')
     this.configureLoginEvent()
     scene.add.existing(this)

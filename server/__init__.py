@@ -63,11 +63,9 @@ def auth():
     if not username:
         return {"msg": "Enter a name"}, 400
     prevUser = User.query.filter_by(username=username).first()
-    if request.method == 'POST':
-        if prevUser:
-            return {'user': prevUser.to_dict()}, 200
-        username = request.json.get('username', None)
-        user = User(username=username)
+    if prevUser:
+        return {'user': prevUser.to_dict()}, 200
+    user = User(username=username)
     db.session.add(user)
     db.session.commit()
     return {'user': user.to_dict()}, 200
@@ -122,6 +120,8 @@ def on_join(data):
 @socketio.on('leave')
 def on_leave(data):
     leave_room(data['lobby'])
+    playerToRemove = User.query.get(data['playerId'])
+    db.session.remove(playerToRemove)
     msg = {
         'type': 'PLAYER_DISONNECT',
         'data': {

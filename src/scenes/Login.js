@@ -27,7 +27,7 @@ export default class Login extends Phaser.Scene {
   }
 
   preload() {
-    this.user = window.localStorage.getItem('meltdown/auth/user')
+    // this.user = window.localStorage.getItem('meltdown/auth/user')
   }
 
   create() {
@@ -43,7 +43,6 @@ export default class Login extends Phaser.Scene {
   }
 
   loadGameScene() {
-    console.log(this.user)
     const user = JSON.parse(this.user)
     const main = new MainScene({ key: 'main', active: true }, user, this.lobbyId)
     this.game.scene.add('main', main)
@@ -60,8 +59,8 @@ export default class Login extends Phaser.Scene {
     this.lobbyList = new LobbyList(this, 400, 300, this.user)
   }
 
-  loginUser(username) {
-    this.user = JSON.stringify(login(username))
+  async loginUser(username) {
+    this.user = JSON.stringify(await login(username))
     this.loadLobbyList()
   }
 
