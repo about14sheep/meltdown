@@ -41,8 +41,5 @@ export default class VoteCard extends Phaser.GameObjects.DOMElement {
   setVote(player, vote) {
     this.votes[player] = vote
   }
-
-  tallyVote() {
-
-  }
+  
 }

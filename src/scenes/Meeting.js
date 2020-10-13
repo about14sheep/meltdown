@@ -14,20 +14,38 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
-import Grass from '../assets/grass.png'
+import GameChat from '../objects/GameChat'
 
-export default class Background extends Phaser.Scene {
-  constructor() {
-    super({ key: 'background', active: true })
-  }
-
-  preload() {
-    // this.load.setBaseURL('/static')
-    this.load.image('grass', Grass)
+export default class Meeting extends Phaser.Scene {
+  constructor(handle, state) {
+    super(handle)
+    this.gameState = state
+    this.players = []
   }
 
   create() {
-    this.grass = this.add.image(400, 300, 'grass')
-    this.grass.setScale(2.5)
+    this.chat = new GameChat(this, 400, 300)
   }
+
+  update() {
+    const chatMsg = this.gameState.newMessage
+    if (chatMsg) {
+      this.addMessage(chatMsg)
+      this.gameState.newMessage = null
+    }
+  }
+
+  callMeeting(players) {
+    this.players = players
+    this.chat.loadChat()
+  }
+
+  addMessage(msg) {
+    this.chat.addMsgToChat(msg)
+  }
+
+  sendMessage(msg) {
+    this.gameState.sendChatMessage(msg)
+  }
+
 }

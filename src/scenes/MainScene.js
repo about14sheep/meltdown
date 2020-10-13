@@ -16,6 +16,7 @@
 
 import Player from '../objects/Player'
 import GameState from '../objects/GameState'
+import Meeting from './Meeting'
 
 import { sliderGame, sliderGameKey, upSliderGameKey, upSliderGame, bottomGame, bottomGameKey, downloadGame, downloadGameKey, employeeGame, employeeGameKey, placeGame, placeGameKey, serverGameKey, serverGame, trashGame, trashGameKey } from '../actions/MiniGames'
 
@@ -29,10 +30,11 @@ export default class MainScene extends Phaser.Scene {
     super(handle)
     this.playerData = data
     this.lobbyID = lobbyID
+    this.inMeeting = false
   }
 
   preload() {
-    this.load.setBaseURL('/static')
+    // this.load.setBaseURL('/static')
     this.load.spritesheet('tiles', FactoryTiles, {
       frameWidth: 16,
       frameHeight: 16
@@ -63,6 +65,7 @@ export default class MainScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player)
     this.computer = this.scene.get('computer')
     this.ui = this.scene.get('ui')
+    this.meeting = new Meeting({ key: 'meeting', active: true }, this.gameState)
     this.ui.setGameState(this.gameState)
     this.computer.setGameState(this.gameState)
     this.computer.loadMiniGame(sliderGameKey, sliderGame)
@@ -77,12 +80,9 @@ export default class MainScene extends Phaser.Scene {
   }
 
   update() {
-    if (!this.gameState.inMeeting) {
-      this.computer.hideChat()
-    }
     this.gameState.update()
-    if (this.gameState.inMeeting) {
-      this.computer.showChat()
+    if (this.inMeeting) {
+      this.meeting.update()
     } else {
       this.player.update()
       if (this.computer.calculateGame() === 'imposters') {
@@ -109,6 +109,24 @@ export default class MainScene extends Phaser.Scene {
       }
     }
 
+  }
+
+  toggleMeeting() {
+    if (this.inMeeting) {
+      this.hideMeeting()
+      this.inMeeting = false
+    } else {
+      this.showMeeting()
+      this.inMeeting = true
+    }
+  }
+
+  showMeeting() {
+    this.scene.bringToTop('meeting')
+  }
+
+  hideMeeting() {
+    this.scene.sendToBack('meeting')
   }
 
   reset() {

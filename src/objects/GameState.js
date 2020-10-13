@@ -16,8 +16,6 @@
 
 import Socket from './Socket'
 import Player from './Player'
-import VoteCard from './VoteCard'
-import { downloadGameKey } from '../actions/MiniGames'
 
 export default class GameState extends Phaser.GameObjects.Container {
   constructor(scene) {
@@ -27,7 +25,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.inMeeting = false
     this.minigames = new Map()
     this.gameStarted = false
-    this.chatMessages = []
+    this.newMessage = null
     this.alert = ''
     this.ws = new Socket(scene)
     this.playersMap = new Map()
@@ -42,7 +40,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   update() {
     this.sendPlayerUpdate()
     if (this.gameStarted) {
-      // this.player.emMeeting || !this.player.isAlive ? this.scene.ui.hideEmButton() : this.scene.ui.showEmButton()
+      this.player.emMeeting || !this.player.isAlive ? this.scene.ui.hideEmButton() : this.scene.ui.showEmButton()
     }
     if (((this.otherPlayers.getChildren().length + 1) >= this.lobbySize) && ((this.playersReady().length + (this.player.isRett ? 1 : 0)) === (this.otherPlayers.getChildren().length + 1))) {
       if (!this.gameStarted) {
@@ -76,10 +74,6 @@ export default class GameState extends Phaser.GameObjects.Container {
     return this.player.imposter ? 'Boom this lab by any means!' : 'Find the Imposters and save this lab!'
   }
 
-  closeMeeting() {
-
-  }
-
   updateMiniGame({ type, data }) {
     this.minigames.set(type, { x: data.x, y: data.y })
   }
@@ -90,8 +84,11 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   callMeeting() {
-    this.player.toggleEmMeeting()
     this.ws.sendMessage({ type: 'PLAYER_MEETING', data: this.player.ID })
+  }
+
+  startMeeting() {
+    this.scene.toggleMeeting()
   }
 
   sendStartGame() {
@@ -110,7 +107,7 @@ export default class GameState extends Phaser.GameObjects.Container {
   }
 
   addChatMessage(data) {
-    this.chatMessages.unshift(data)
+    this.newMessage = data
   }
 
   gatherPlayerIds() {
@@ -158,7 +155,6 @@ export default class GameState extends Phaser.GameObjects.Container {
     arr.forEach(el => {
       if (el === this.player.ID) {
         this.player.imposter = true
-        this.player.toggleEmMeeting()
       }
     })
     this.player.reset()

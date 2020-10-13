@@ -24,7 +24,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.isRett = false
     this.isAlive = true
     this.target = null
-    this.emMeeting = false
     this.hitbox = this.playerHitBox()
     this.scene = scene
     this.lobby = scene.lobbyID
@@ -103,10 +102,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   updateNameTag() {
     this.nameTag.setPosition(this.x - (this.nameTag.displayWidth / 2), this.y - 40)
     this.updateHitBoxPosition()
-  }
-
-  toggleEmMeeting() {
-    this.emMeeting = !this.emMeeting
   }
 
   playerUpdater() {
