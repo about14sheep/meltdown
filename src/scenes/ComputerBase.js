@@ -28,7 +28,7 @@ export default class ComputerBase extends Phaser.Scene {
   }
 
   preload() {
-    this.load.setBaseURL('/static')
+    // this.load.setBaseURL('/static')
     this.load.image('computerbase', ComputerBaseImage)
     this.load.spritesheet('hack', HackIcon, {
       frameWidth: 54,
@@ -89,24 +89,6 @@ export default class ComputerBase extends Phaser.Scene {
     this.currentGame = key
     this.scene.moveAbove(this.baseKey, key)
     return this.scene.get(key)
-  }
-
-  showChat() {
-    if (!this.gameChat) {
-      this.gameChat = new GameChat(this, 500, 450)
-    }
-    this.scene.bringToTop(this.baseKey)
-    this.gameChat.updater()
-  }
-
-  destroyGameChat() {
-    this.gameChat.destroy()
-  }
-
-  hideChat() {
-    if (this.gameChat) {
-      this.gameState.ws.sendMessage({ type: 'CLOSE_MEETING' })
-    }
   }
 
   calculateGame() {

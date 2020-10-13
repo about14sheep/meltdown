@@ -19,8 +19,8 @@ export default class Socket extends Phaser.GameObjects.Container {
   constructor(scene) {
     super(scene)
     this.scene = scene
-    // this.socket = io('ws://localhost:3000')
-    this.socket = io(`wss://${window.location.host}`)
+    this.socket = io('ws://localhost:3000')
+    // this.socket = io(`wss://${window.location.host}`)
     this.lobbyId = scene.lobbyID
     this.configure(this.socket)
   }
@@ -69,7 +69,7 @@ export default class Socket extends Phaser.GameObjects.Container {
         this.scene.gameState.acceptDeath(msg.data)
         break
       case 'PLAYER_MEETING':
-        this.scene.gameState.joinMeeting(msg.data)
+        this.scene.gameState.startMeeting(msg.data)
         break
       case 'PLAYER_CHAT':
         this.scene.gameState.addChatMessage(msg.data)
