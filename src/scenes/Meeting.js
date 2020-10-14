@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
+import { employeeGameKey } from '../actions/MiniGames'
 import GameChat from '../objects/GameChat'
 import VoteCard from '../objects/VoteCard'
 
@@ -73,7 +74,9 @@ export default class Meeting extends Phaser.Scene {
 
   setVote(vote) {
     this.voteCard.setVote(vote.player, vote.vote)
-    this.tallyVotes()
+    if (Object.values(this.voteCard.votes).length === this.players.length) {
+      console.log(this.tallyVotes())
+    }
   }
 
   sendVote(id) {
@@ -85,7 +88,23 @@ export default class Meeting extends Phaser.Scene {
   }
 
   tallyVotes() {
-    console.log(this.voteCard.votes)
+    const voteObj = this.voteCard.votes
+    const votes = Object.values(voteObj)
+    let result = ''
+    let winner = null
+    this.players.forEach(player => {
+      if (winner === null) {
+        result = player.username
+        winner = votes.filter(el => player.ID === Number(el)).length
+      } else {
+        const playerVotes = votes.filter(el => player.ID === Number(el)).length
+        if (winner < playerVotes) {
+          result = player.username
+          winner = playerVotes
+        }
+      }
+    })
+    return winner > 1 ? result : 'No one gets voted out.. this time'
   }
 
 }

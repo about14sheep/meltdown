@@ -28,6 +28,7 @@ export default class VoteCard extends Phaser.GameObjects.DOMElement {
     if (bool) {
       this.createFromHTML(`<div id="vote_container" style=" padding: 10px; height: 400px; display: flex; flex-direction: column; justify-content: center; background-color: #4E4E4E;"><div><h1>Vote Cast!</h1></div>`)
     } else {
+      this.votes = {}
       this.createFromHTML(this.createButtons())
       this.registerEvents()
     }
