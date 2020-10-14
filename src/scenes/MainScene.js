@@ -117,6 +117,7 @@ export default class MainScene extends Phaser.Scene {
       this.inMeeting = false
     } else {
       this.showMeeting()
+      this.meeting.callMeeting(this.gameState.otherPlayers.getChildren().concat([this.player]))
       this.meeting.showSelf()
       this.inMeeting = true
     }

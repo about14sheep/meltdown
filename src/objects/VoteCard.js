@@ -15,31 +15,52 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 export default class VoteCard extends Phaser.GameObjects.DOMElement {
-  constructor(scene, x, y, players) {
+  constructor(scene, x, y) {
     super(scene, x, y)
     this.scene = scene
-    this.votes = this.configurePlayers(players)
-    this.createButtons(players)
+    this.players = []
+    this.updateCard()
+    scene.add.existing(this)
   }
 
-  configurePlayers(players) {
+  updateCard() {
+    this.votes = this.configurePlayers()
+    this.createFromHTML(this.createButtons())
+    this.registerEvents()
+  }
+
+  configurePlayers() {
     const res = {}
-    players.forEach(player => {
+    this.players.forEach(player => {
       res[player] = null
     })
     return res
   }
 
-  createButtons(players) {
+  createButtons() {
     let res = ''
-    this.buttons = players.forEach((el, i) => {
+    this.players.forEach(el => {
       res += `<button id=${el.username}>${el.username}</button>`
     })
-    this.createFromHTML(res)
+    return `<div id="vote_container" style="width: 320px; height: 400px; background-color: #4E4E4E;">${res}</div>`
+  }
+
+  registerEvents() {
+    const buttons = this.getChildByID('vote_container').childNodes
+    buttons.forEach(el => el.addEventListener('click', this.voteHandler.bind(this)))
+  }
+
+  setPlayers(players) {
+    this.players = players
+    this.updateCard()
+  }
+
+  voteHandler(e) {
+    console.log(e)
   }
 
   setVote(player, vote) {
     this.votes[player] = vote
   }
-  
+
 }

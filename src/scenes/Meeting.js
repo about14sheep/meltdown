@@ -15,6 +15,7 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>
 
 import GameChat from '../objects/GameChat'
+import VoteCard from '../objects/VoteCard'
 
 export default class Meeting extends Phaser.Scene {
   constructor() {
@@ -24,7 +25,9 @@ export default class Meeting extends Phaser.Scene {
 
   create() {
     this.chat = new GameChat(this, 400, 300)
+    this.voteCard = new VoteCard(this, 400, 300)
     this.chat.setVisible(false)
+    this.voteCard.setVisible(false)
   }
 
   update() {
@@ -39,11 +42,13 @@ export default class Meeting extends Phaser.Scene {
   showSelf() {
     this.scene.setActive(true)
     this.chat.setVisible(true)
+    this.voteCard.setVisible(true)
   }
 
   hideSelf() {
     this.scene.setActive(false)
     this.chat.setVisible(false)
+    this.voteCard.setVisible(false)
   }
 
   setState(state) {
@@ -53,6 +58,7 @@ export default class Meeting extends Phaser.Scene {
 
   callMeeting(players) {
     this.players = players
+    this.voteCard.setPlayers(players)
     this.chat.loadChat()
   }
 
