@@ -19,30 +19,26 @@ export default class VoteCard extends Phaser.GameObjects.DOMElement {
     super(scene, x, y)
     this.scene = scene
     this.players = []
-    this.updateCard()
+    this.votes = {}
+    this.updateCard(false)
     scene.add.existing(this)
   }
 
-  updateCard() {
-    this.votes = this.configurePlayers()
-    this.createFromHTML(this.createButtons())
-    this.registerEvents()
-  }
-
-  configurePlayers() {
-    const res = {}
-    this.players.forEach(player => {
-      res[player] = null
-    })
-    return res
+  updateCard(bool) {
+    if (bool) {
+      this.createFromHTML(`<div id="vote_container" style=" padding: 10px; height: 400px; display: flex; flex-direction: column; justify-content: center; background-color: #4E4E4E;"><div><h1>Vote Cast!</h1></div>`)
+    } else {
+      this.createFromHTML(this.createButtons())
+      this.registerEvents()
+    }
   }
 
   createButtons() {
     let res = ''
     this.players.forEach(el => {
-      res += `<button id=${el.username}>${el.username}</button>`
+      res += `<button id=${el.ID}>${el.username}</button>`
     })
-    return `<div id="vote_container" style="width: 320px; height: 400px; background-color: #4E4E4E;">${res}</div>`
+    return `<div id="vote_container" style=" padding: 10px; height: 400px; display: flex; flex-direction: column; justify-content: center; background-color: #4E4E4E;"><div id="no_button"><h1 id="not_button">Vote Imposter</h1></div>${res}</div>`
   }
 
   registerEvents() {
@@ -52,11 +48,13 @@ export default class VoteCard extends Phaser.GameObjects.DOMElement {
 
   setPlayers(players) {
     this.players = players
-    this.updateCard()
+    this.updateCard(false)
   }
 
   voteHandler(e) {
-    console.log(e)
+    if (e.target.id === "no_button" || e.target.id === "not_button") return
+    this.scene.sendVote(e.target.id)
+    this.updateCard(true)
   }
 
   setVote(player, vote) {

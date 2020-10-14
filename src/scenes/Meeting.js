@@ -24,8 +24,8 @@ export default class Meeting extends Phaser.Scene {
   }
 
   create() {
-    this.chat = new GameChat(this, 400, 300)
-    this.voteCard = new VoteCard(this, 400, 300)
+    this.chat = new GameChat(this, 500, 300)
+    this.voteCard = new VoteCard(this, 200, 300)
     this.chat.setVisible(false)
     this.voteCard.setVisible(false)
   }
@@ -33,9 +33,14 @@ export default class Meeting extends Phaser.Scene {
   update() {
     if (!this.gameState) return
     const chatMsg = this.gameState.newMessage
+    const playerVote = this.gameState.newVote
     if (chatMsg) {
       this.addMessage(chatMsg)
       this.gameState.newMessage = null
+    }
+    if (playerVote) {
+      this.setVote(playerVote)
+      this.gameState.newVote = null
     }
   }
 
@@ -66,8 +71,21 @@ export default class Meeting extends Phaser.Scene {
     this.chat.addMsgToChat(msg)
   }
 
+  setVote(vote) {
+    this.voteCard.setVote(vote.player, vote.vote)
+    this.tallyVotes()
+  }
+
+  sendVote(id) {
+    this.gameState.sendVote(this.gameState.player.ID, id)
+  }
+
   sendMessage(msg) {
     this.gameState.sendChatMessage(msg)
+  }
+
+  tallyVotes() {
+    console.log(this.voteCard.votes)
   }
 
 }

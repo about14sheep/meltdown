@@ -26,6 +26,7 @@ export default class GameState extends Phaser.GameObjects.Container {
     this.minigames = new Map()
     this.gameStarted = false
     this.newMessage = null
+    this.newVote = null
     this.alert = ''
     this.ws = new Socket(scene)
     this.playersMap = new Map()
@@ -104,6 +105,14 @@ export default class GameState extends Phaser.GameObjects.Container {
 
   sendChatMessage(msg) {
     this.ws.sendMessage({ type: 'PLAYER_CHAT', data: { username: msg.player, message: msg.text } })
+  }
+
+  sendVote(player, id) {
+    this.ws.sendMessage({ type: 'PLAYER_VOTE', data: { player: player, vote: id } })
+  }
+
+  addPlayerVote(data) {
+    this.newVote = data
   }
 
   addChatMessage(data) {

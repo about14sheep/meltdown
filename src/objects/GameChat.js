@@ -27,12 +27,12 @@ export default class GameChat extends Phaser.GameObjects.DOMElement {
   }
 
   addMsgToChat(msg) {
-    this.messageElements.push(`<p><span>${msg.username}:</span> ${msg.message}</p>`)
+    this.messageElements.unshift(`<p><span>${msg.username}:</span> ${msg.message}</p>`)
     this.updateChat()
   }
 
   updateChat() {
-    this.createFromHTML(`<div style="width: 320px; height: 400px; background-color: #4E4E4E;"><div id="msgLog">${this.messageElements ? this.messageElements.reduce((el, accum) => accum += el) : ''}</div><div><input type="text" placeholder="say something" id="chatBox" name="chatBox"><input type="submit" id="submit" value="Send"></div></div>`)
+    this.createFromHTML(`<div style=" padding: 10px; width: 320px; height: 400px; background-color: #4E4E4E;"><div id="msgLog">${this.messageElements ? this.messageElements.reduce((el, accum) => accum += el) : ''}</div><div><input type="text" placeholder="say something" id="chatBox" name="chatBox"><input type="submit" id="submit" value="Send"></div></div>`)
     this.input = this.getChildByID('chatBox')
     this.msgLog = this.getChildByID('msgLog')
     this.configureSendMessageEvent()

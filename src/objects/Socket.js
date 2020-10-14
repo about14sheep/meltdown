@@ -74,6 +74,9 @@ export default class Socket extends Phaser.GameObjects.Container {
       case 'PLAYER_CHAT':
         this.scene.gameState.addChatMessage(msg.data)
         break
+      case 'PLAYER_VOTE':
+        this.scene.gameState.addPlayerVote(msg.data)
+        break
       default:
         this.scene.gameState.updateMiniGame(msg)
     }
