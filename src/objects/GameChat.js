@@ -17,11 +17,8 @@
 export default class GameChat extends Phaser.GameObjects.DOMElement {
   constructor(scene, x, y) {
     super(scene, x, y)
-    this.createFromHTML(`<div style="width: 320px; height: 400px; background-color: #4E4E4E;"><div id="msgLog"></div><div><input type="text" placeholder="say something" id="chatBox" name="chatBox"><input type="submit" id="submit" value="Send"></div></div>`)
-    this.input = this.getChildByID('chatBox')
-    this.msgLog = this.getChildByID('msgLog')
+    this.updateChat()
     this.messageElements = []
-    this.configureSendMessageEvent()
     scene.add.existing(this)
   }
 
@@ -35,7 +32,10 @@ export default class GameChat extends Phaser.GameObjects.DOMElement {
   }
 
   updateChat() {
-    this.createFromHTML(this.messageElements.reduce((el, accum) => accum += el))
+    this.createFromHTML(`<div style="width: 320px; height: 400px; background-color: #4E4E4E;"><div id="msgLog">${this.messageElements ? this.messageElements.reduce((el, accum) => accum += el) : ''}</div><div><input type="text" placeholder="say something" id="chatBox" name="chatBox"><input type="submit" id="submit" value="Send"></div></div>`)
+    this.input = this.getChildByID('chatBox')
+    this.msgLog = this.getChildByID('msgLog')
+    this.configureSendMessageEvent()
   }
 
   setState(state) {
