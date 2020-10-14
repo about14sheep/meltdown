@@ -17,13 +17,9 @@
 export default class GameChat extends Phaser.GameObjects.DOMElement {
   constructor(scene, x, y) {
     super(scene, x, y)
-    this.createFromHTML(`<div style="width: 320px; height: 400px; background-color: blue;"><div id="msgLog"></div><input type="text" placeholder="say something" id="chatBox" name="chatBox"><input type="submit" id="submit" value="Send"></div>`)
+    this.createFromHTML(`<div style="width: 320px; height: 400px; background-color: #4E4E4E;"><div id="msgLog"></div><div><input type="text" placeholder="say something" id="chatBox" name="chatBox"><input type="submit" id="submit" value="Send"></div></div>`)
     this.input = this.getChildByID('chatBox')
     this.msgLog = this.getChildByID('msgLog')
-    this.close = scene.add.text(550, 100, 'CLOSE').setInteractive()
-    this.close.on('pointerdown', _ => {
-      this.gameState.inMeeting = false
-    })
     this.messageElements = []
     this.configureSendMessageEvent()
     scene.add.existing(this)
@@ -34,18 +30,16 @@ export default class GameChat extends Phaser.GameObjects.DOMElement {
   }
 
   addMsgToChat(msg) {
-    this.messageElements.push(`<p><span>${msg.username}:</span> ${msg.message}<p>`)
-    return this.updateChat()
+    this.messageElements.push(`<p><span>${msg.username}:</span> ${msg.message}</p>`)
+    this.updateChat()
   }
 
   updateChat() {
-    this.msgLog.appendChild(this.messageElements(this.messageElements.length - 1))
+    this.createFromHTML(this.messageElements.reduce((el, accum) => accum += el))
   }
 
-  updater() {
-    this.gameState.chatMessages.forEach((el, i) => {
-      this.scene.add.text(400, 150 + (30 * i), `${el.username}: ${el.message}`)
-    })
+  setState(state) {
+    this.gameState = state
   }
 
   configureSendMessageEvent() {
@@ -54,7 +48,7 @@ export default class GameChat extends Phaser.GameObjects.DOMElement {
   }
 
   sendChatHandler() {
-    this.scene.sendMessage({ player: this.gameState.player.username, text: this.chatBox.value })
-    this.chatBox.value = ''
+    this.scene.sendMessage({ player: this.gameState.player.username, text: this.input.value })
+    this.input.value = ''
   }
 }

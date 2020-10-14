@@ -16,7 +16,6 @@
 
 import Player from '../objects/Player'
 import GameState from '../objects/GameState'
-import Meeting from './Meeting'
 
 import { sliderGame, sliderGameKey, upSliderGameKey, upSliderGame, bottomGame, bottomGameKey, downloadGame, downloadGameKey, employeeGame, employeeGameKey, placeGame, placeGameKey, serverGameKey, serverGame, trashGame, trashGameKey } from '../actions/MiniGames'
 
@@ -65,7 +64,8 @@ export default class MainScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player)
     this.computer = this.scene.get('computer')
     this.ui = this.scene.get('ui')
-    this.meeting = new Meeting({ key: 'meeting', active: true }, this.gameState)
+    this.meeting = this.scene.get('meeting')
+    this.meeting.setState(this.gameState)
     this.ui.setGameState(this.gameState)
     this.computer.setGameState(this.gameState)
     this.computer.loadMiniGame(sliderGameKey, sliderGame)
@@ -108,15 +108,16 @@ export default class MainScene extends Phaser.Scene {
         this.impGame = null
       }
     }
-
   }
 
   toggleMeeting() {
     if (this.inMeeting) {
       this.hideMeeting()
+      this.meeting.hideSelf()
       this.inMeeting = false
     } else {
       this.showMeeting()
+      this.meeting.showSelf()
       this.inMeeting = true
     }
   }

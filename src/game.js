@@ -20,6 +20,7 @@ import UIScene from './scenes/UIScene'
 import ComputerBase from './scenes/ComputerBase'
 import Login from './scenes/Login'
 import Background from './scenes/Background'
+import Meeting from './scenes/Meeting'
 
 const config = {
   type: Phaser.AUTO,
@@ -32,7 +33,7 @@ const config = {
   dom: {
     createContainer: true
   },
-  scene: [UIScene, Login, Background, ComputerBase]
+  scene: [Meeting, UIScene, Login, Background, ComputerBase]
 }
 
 export const game = new Phaser.Game(config)

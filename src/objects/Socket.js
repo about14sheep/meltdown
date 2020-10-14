@@ -74,9 +74,6 @@ export default class Socket extends Phaser.GameObjects.Container {
       case 'PLAYER_CHAT':
         this.scene.gameState.addChatMessage(msg.data)
         break
-      case 'CLOSE_MEETING':
-        this.scene.scene.get('computer').destroyGameChat()
-        break
       default:
         this.scene.gameState.updateMiniGame(msg)
     }

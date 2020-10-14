@@ -17,22 +17,38 @@
 import GameChat from '../objects/GameChat'
 
 export default class Meeting extends Phaser.Scene {
-  constructor(handle, state) {
-    super(handle)
-    this.gameState = state
+  constructor() {
+    super({ key: 'meeting', active: false })
     this.players = []
   }
 
   create() {
     this.chat = new GameChat(this, 400, 300)
+    this.chat.setVisible(false)
   }
 
   update() {
+    if (!this.gameState) return
     const chatMsg = this.gameState.newMessage
     if (chatMsg) {
       this.addMessage(chatMsg)
       this.gameState.newMessage = null
     }
+  }
+
+  showSelf() {
+    this.scene.setActive(true)
+    this.chat.setVisible(true)
+  }
+
+  hideSelf() {
+    this.scene.setActive(false)
+    this.chat.setVisible(false)
+  }
+
+  setState(state) {
+    this.gameState = state
+    this.chat.setState(state)
   }
 
   callMeeting(players) {
