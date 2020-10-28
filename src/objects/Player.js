@@ -32,7 +32,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.lastAnim = null
     this.velocity = 250
     this.nameTag = scene.add.text(x - 16, (y - 40), username).setVisible(nameTag)
-    this.keys = scene.input.keyboard.addKeys('W,S,A,D')
     this.ID = id
     this.username = username
     scene.add.existing(this)
@@ -42,7 +41,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   update() {
     this.isAlive ? this.setAlpha(1) : this.setAlpha(0.5)
-    const keys = this.keys
+    const keys = this.addKeys()
     let currentAnimKey = 'idle'
     this.zeroSpeed()
     this.updateHitBoxPosition()
@@ -78,6 +77,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       this.lastAnim = currentAnimKey
       this.anims.play(currentAnimKey, true)
     }
+  }
+
+  addKeys() {
+    return this.scene.input.keyboard.addKeys('W,S,A,D')
+  }
+
+  removeKeys() {
+    this.scene.input.keyboard.clearCaptures()
   }
 
   setTarget(player) {

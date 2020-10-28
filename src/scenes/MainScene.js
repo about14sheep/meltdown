@@ -33,7 +33,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.setBaseURL('/static')
+    // this.load.setBaseURL('/static')
     this.load.spritesheet('tiles', FactoryTiles, {
       frameWidth: 16,
       frameHeight: 16
@@ -116,6 +116,7 @@ export default class MainScene extends Phaser.Scene {
       this.meeting.hideSelf()
       this.inMeeting = false
     } else {
+      this.player.removeKeys()
       this.showMeeting()
       this.meeting.callMeeting(this.gameState.otherPlayers.getChildren().concat([this.player]))
       this.meeting.showSelf()

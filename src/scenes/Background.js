@@ -22,7 +22,7 @@ export default class Background extends Phaser.Scene {
   }
 
   preload() {
-    this.load.setBaseURL('/static')
+    // this.load.setBaseURL('/static')
     this.load.image('grass', Grass)
   }
 
