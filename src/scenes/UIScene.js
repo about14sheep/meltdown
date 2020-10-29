@@ -26,7 +26,7 @@ export default class UIScene extends Phaser.Scene {
   }
 
   preload() {
-    // this.load.setBaseURL('/static')
+    this.load.setBaseURL('/static')
     this.load.image('emButton', EmergencyButton)
     this.load.spritesheet('killButton', KillButton, {
       frameWidth: 35,

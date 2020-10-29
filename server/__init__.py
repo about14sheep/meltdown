@@ -34,9 +34,9 @@ app = Flask(__name__)
 app.config.from_object(Config)
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger('flask_cors').level = logging.DEBUG
-socketio = SocketIO(app, cors_allowed_origins='http://localhost:8080')
-# socketio = SocketIO(
-#     app, cors_allowed_origins='https://meltdowntts.herokuapp.com')
+# socketio = SocketIO(app, cors_allowed_origins='http://localhost:8080')
+socketio = SocketIO(
+    app, cors_allowed_origins='https://meltdowntts.herokuapp.com')
 db.init_app(app)
 login_manager = LoginManager(app)
 jwt = JWTManager(app)

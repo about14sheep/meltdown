@@ -27,12 +27,12 @@ export default class GameChat extends Phaser.GameObjects.DOMElement {
   }
 
   addMsgToChat(msg) {
-    this.messageElements.unshift(`<p><span>${msg.username}:</span> ${msg.message}</p>`)
+    this.messageElements.unshift(`<p style="max-width: 250px; word-break: break-all; white-space: normal;"><span style="font-weight: bold; color: white;">${msg.username}:</span> ${msg.message}</p>`)
     this.updateChat()
   }
 
   updateChat() {
-    this.createFromHTML(`<div style=" padding: 10px; width: 320px; height: 400px; background-color: #4E4E4E;"><div id="msgLog">${this.messageElements ? this.messageElements.reduce((el, accum) => accum += el) : ''}</div><div><input type="text" placeholder="say something" id="chatBox" name="chatBox"><input type="submit" id="submit" value="Send"></div></div>`)
+    this.createFromHTML(`<div style="position: relative; padding: 10px; width: 320px; height: 400px; background-color: #4E4E4E;"><div id="msgLog" style="display: flex; flex-direction: column-reverse; position: absolute; top: 0; width: 95%; height: 95%; overflow-y: scroll;">${this.messageElements ? this.messageElements.reduce((el, accum) => accum += el) : ''}</div><div style="position: absolute; bottom: 0; right: 0;"><input type="text" placeholder="say something" id="chatBox" name="chatBox"><input type="submit" id="submit" value="Send"></div></div>`)
     this.input = this.getChildByID('chatBox')
     this.msgLog = this.getChildByID('msgLog')
     this.configureSendMessageEvent()
