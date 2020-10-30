@@ -16,7 +16,6 @@
 
 import ComputerBaseImage from '../assets/computer_screen_base.png'
 import HackIcon from '../assets/hack_icon_spritesheet.png'
-import GameChat from '../objects/GameChat'
 export default class ComputerBase extends Phaser.Scene {
   constructor() {
     super({ key: 'computer', active: true })
@@ -28,7 +27,7 @@ export default class ComputerBase extends Phaser.Scene {
   }
 
   preload() {
-    this.load.setBaseURL('/static')
+    // this.load.setBaseURL('/static')
     this.load.image('computerbase', ComputerBaseImage)
     this.load.spritesheet('hack', HackIcon, {
       frameWidth: 54,
