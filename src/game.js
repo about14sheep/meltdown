@@ -24,6 +24,7 @@ import Meeting from './scenes/Meeting'
 
 const config = {
   type: Phaser.AUTO,
+  autoCenter: Phaser.Scale.CENTER_BOTH,
   width: 800,
   height: 600,
   physics: {
