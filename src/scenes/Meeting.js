@@ -93,17 +93,17 @@ export default class Meeting extends Phaser.Scene {
     let winner = null
     this.players.forEach(player => {
       if (winner === null) {
-        result = player.username
+        result = player.ID
         winner = votes.filter(el => player.ID === Number(el)).length
       } else {
         const playerVotes = votes.filter(el => player.ID === Number(el)).length
         if (winner < playerVotes) {
-          result = player.username
+          result = player.ID
           winner = playerVotes
         }
       }
     })
-    return winner > 1 ? result : 'No one gets voted out.. this time'
+    return winner > 1 ? this.gameState.killPlayerByID(result) : 'No one gets voted out.. this time'
   }
 
 }

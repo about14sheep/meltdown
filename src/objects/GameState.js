@@ -196,7 +196,11 @@ export default class GameState extends Phaser.GameObjects.Container {
     const deadMan = this.otherPlayers.getChildren().find(el => el.ID === this.player.target.ID)
     deadMan.isAlive = false
     this.player.target = null
-    this.ws.sendMessage({ type: 'PLAYER_KILL', data: deadMan.ID })
+    this.killPlayerByID(deadMan.ID)
+  }
+
+  killPlayerByID(id) {
+    this.ws.sendMessage({ type: 'PLAYER_KILL', data: id })
   }
 
   acceptDeath(data) {
