@@ -27,7 +27,7 @@ export default class ComputerBase extends Phaser.Scene {
   }
 
   preload() {
-    // this.load.setBaseURL('/static')
+    this.load.setBaseURL('/static')
     this.load.image('computerbase', ComputerBaseImage)
     this.load.spritesheet('hack', HackIcon, {
       frameWidth: 54,
