@@ -115,6 +115,7 @@ export default class MainScene extends Phaser.Scene {
       this.hideMeeting()
       this.meeting.hideSelf()
       this.inMeeting = false
+      this.reset()
     } else {
       this.player.removeKeys()
       this.showMeeting()

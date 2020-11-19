@@ -74,7 +74,8 @@ export default class Meeting extends Phaser.Scene {
   setVote(vote) {
     this.voteCard.setVote(vote.player, vote.vote)
     if (Object.values(this.voteCard.votes).length === this.players.length) {
-      console.log(this.tallyVotes())
+      this.tallyVotes()
+      this.gameState.startMeeting()
     }
   }
 
@@ -103,7 +104,7 @@ export default class Meeting extends Phaser.Scene {
         }
       }
     })
-    return winner > 1 ? this.gameState.killPlayerByID(result) : 'No one gets voted out.. this time'
+    return winner > 1 ? this.gameState.killPlayerByID(result) : null
   }
 
 }
