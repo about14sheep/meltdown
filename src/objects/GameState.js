@@ -65,9 +65,9 @@ export default class GameState extends Phaser.GameObjects.Container {
 
   alertMessage() {
     if (this.otherPlayers.getChildren().length + 1 >= this.lobbySize) {
-      return `(${this.playersReady().length + (this.player.isRett ? 1 : 0)} / ${this.otherPlayers.getChildren().length + 1}) Waiting for players to ready..`
+      return ` W,S,A,D to move \n Walk over computer to activate it \n\n (${this.playersReady().length + (this.player.isRett ? 1 : 0)} / ${this.otherPlayers.getChildren().length + 1}) Waiting for players to ready..`
     } else {
-      return `(${this.otherPlayers.getChildren().length + 1} / 8) Waiting for players to join..`
+      return ` W,S,A,D to move \n Walk over a computer to activate it \n\n (${this.otherPlayers.getChildren().length + 1} / 8) Waiting for players to join..`
     }
   }
 
